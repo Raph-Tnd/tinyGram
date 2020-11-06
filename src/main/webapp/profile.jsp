@@ -76,14 +76,30 @@
                 var data={'url': url,
                     'body': desc}
                 console.log("post:"+data)
+                if (data.url != ""){
+                    return m.request({
+                        method: "POST",
+                        url: "_ah/api/myApi/v1/postMsg"+'?access_token='+encodeURIComponent(Profile.ID),
+                        params: data,
+                    })
+                    .then(function(result) {
+                        console.log("post_message:",result)
+                        Profile.loadList()
+                    })
+                }
+            },
+            delete: function(url) {
+                var data={'url': url}
                 return m.request({
                     method: "POST",
-                    url: "_ah/api/myApi/v1/postMsg"+'?access_token='+encodeURIComponent(Profile.ID),
+                    url: "_ah/api/myApi/v1/deleteMsg"+'?access_token='+encodeURIComponent(Profile.ID),
                     params: data,
                 })
                 .then(function(result) {
-                    console.log("post_message:",result)
-                    Profile.loadList()
+                    console.log("delete:",result)
+                })
+                .catch(function() {
+                    console.log('err')
                 })
             }
         }
@@ -94,8 +110,8 @@
                 return m("form", {
                     onsubmit: function(e) {
                         e.preventDefault()
-                        if (url ="") {console.log("Pas d'url")}
-                        else{Profile.postMessage(PostForm.body,PostForm.url)}
+                        if (url ="") {console.log("No url")}
+                        Profile.postMessage(PostForm.body,PostForm.url)
                     }
                 },
                 [
@@ -136,7 +152,7 @@
                             console.log("like:"+item.key.id)
                             }},"like")),
                             m("td", m("button", {onclick: function(e) {
-                            console.log("del:"+item.key.id)
+                            Profile.delete(item.properties.url)
                             }},"del")),
                             m('td', m('label', item.properties.body)),
                             m('td', m('img', {class: 'is-rounded', 'src': item.properties.url})),

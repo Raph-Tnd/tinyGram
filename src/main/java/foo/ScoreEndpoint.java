@@ -1,40 +1,19 @@
 package foo;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-
-import com.google.api.server.spi.auth.common.User;
-import com.google.api.server.spi.config.Api;
-import com.google.api.server.spi.config.ApiMethod;
+import com.google.api.server.spi.config.*;
 import com.google.api.server.spi.config.ApiMethod.HttpMethod;
-import com.google.api.server.spi.config.ApiNamespace;
-import com.google.api.server.spi.config.Named;
-import com.google.api.server.spi.config.Nullable;
 import com.google.api.server.spi.response.CollectionResponse;
 import com.google.api.server.spi.response.UnauthorizedException;
-import com.google.api.server.spi.auth.EspAuthenticator;
-
-import com.google.appengine.api.datastore.Cursor;
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.FetchOptions;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.PropertyProjection;
-import com.google.appengine.api.datastore.PreparedQuery.TooManyResultsException;
-import com.google.appengine.api.datastore.Query.CompositeFilter;
-import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
-import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.appengine.api.datastore.QueryResultList;
-import com.google.appengine.api.datastore.Transaction;
+import com.google.appengine.api.users.User;
+import com.google.apphosting.api.DatastorePb;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
 @Api(name = "myApi",
      version = "v1",
@@ -42,8 +21,8 @@ import com.google.appengine.api.datastore.Transaction;
   	 clientIds = "1067622413243-kjhodo8vcomp32b0bpi84m47blnvkc1r.apps.googleusercontent.com",
      namespace =
      @ApiNamespace(
-		   ownerDomain = "helloworld.example.com",
-		   ownerName = "helloworld.example.com",
+		   ownerDomain = "https://tinygram-1.ew.r.appspot.com/",
+		   ownerName = "https://tinygram-1.ew.r.appspot.com/",
 		   packagePath = "")
      )
 
@@ -196,7 +175,6 @@ public class ScoreEndpoint {
 
 	@ApiMethod(name = "postMsg", httpMethod = HttpMethod.POST)
 	public Entity postMsg(User user, PostMessage pm) throws UnauthorizedException {
-
 		if (user == null) {
 			throw new UnauthorizedException("Invalid credentials");
 		}
@@ -219,5 +197,28 @@ public class ScoreEndpoint {
 //		datastore.put(pi);
 		txn.commit();
 		return e;
+	}
+
+	@ApiMethod(name = "deleteMsg", httpMethod = HttpMethod.POST)
+	public void deleteMsg(User user, PostMessage pm) throws UnauthorizedException {
+		if (user == null) {
+			throw new UnauthorizedException("Invalid credentials");
+		}
+
+		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+		Query q = new Query("Post");
+
+		q.setKeysOnly();
+
+		q.setFilter(new FilterPredicate("url",FilterOperator.EQUAL,pm.url));
+
+		PreparedQuery pq = ds.prepare(q);
+		Entity toRemove = pq.asSingleEntity();
+
+		Transaction txn = ds.beginTransaction();
+
+		ds.delete(toRemove.getKey());
+
+		txn.commit();
 	}
 }
