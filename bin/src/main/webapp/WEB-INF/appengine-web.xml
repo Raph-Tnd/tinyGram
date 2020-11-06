@@ -10,8 +10,6 @@
     </include>
     <include path="/**.js" >
     </include>
-    <include path ="/**.woff" >
-    </include>
     
   </static-files>
   <system-properties>
