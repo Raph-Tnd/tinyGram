@@ -88,18 +88,17 @@
                     })
                 }
             },
-            delete: function(url) {
-                var data={'url': url}
+            deleteMessage: function(name) {
                 return m.request({
-                    method: "POST",
-                    url: "_ah/api/myApi/v1/deleteMsg"+'?access_token='+encodeURIComponent(Profile.ID),
-                    params: data,
+                    method: "DELETE",
+                    url: "_ah/api/myApi/v1/deleteMsg/"+name+'?access_token='+encodeURIComponent(Profile.ID)
                 })
                 .then(function(result) {
                     console.log("delete:",result)
+                    Profile.list.splice(Profile.list.indexOf(result),1)
                 })
-                .catch(function() {
-                    console.log('err')
+                .catch(function(e) {
+                    console.log(e.message)
                 })
             }
         }
@@ -152,7 +151,8 @@
                             console.log("like:"+item.key.id)
                             }},"like")),
                             m("td", m("button", {onclick: function(e) {
-                            Profile.delete(item.properties.url)
+                                e.preventDefault()
+                                Profile.deleteMessage(item.key.name)
                             }},"del")),
                             m('td', m('label', item.properties.body)),
                             m('td', m('img', {class: 'is-rounded', 'src': item.properties.url})),

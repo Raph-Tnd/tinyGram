@@ -9,7 +9,6 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.users.User;
-import com.google.apphosting.api.DatastorePb;
 
 import java.util.Date;
 import java.util.List;
@@ -173,6 +172,13 @@ public class ScoreEndpoint {
 		return CollectionResponse.<Entity>builder().setItems(results).setNextPageToken(cursorString).build();
 	}
 
+	public Key getUserKey(User user){
+		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+		Query q = new Query("_ah_SESSION");
+				//.setFilter(new FilterPredicate(""));
+		return null;
+	}
+
 	@ApiMethod(name = "postMsg", httpMethod = HttpMethod.POST)
 	public Entity postMsg(User user, PostMessage pm) throws UnauthorizedException {
 		if (user == null) {
@@ -192,33 +198,21 @@ public class ScoreEndpoint {
 //		pi.setProperty("receivers",rec);
 		
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		Transaction txn = datastore.beginTransaction();
 		datastore.put(e);
 //		datastore.put(pi);
-		txn.commit();
 		return e;
 	}
 
-	@ApiMethod(name = "deleteMsg", httpMethod = HttpMethod.POST)
-	public void deleteMsg(User user, PostMessage pm) throws UnauthorizedException {
+	@ApiMethod(name = "deleteMsg", path = "deleteMsg/{keyPost}",httpMethod = HttpMethod.DELETE)
+	public Entity deleteMsg(User user, @Named("keyPost") String keyPost) throws UnauthorizedException, EntityNotFoundException {
 		if (user == null) {
 			throw new UnauthorizedException("Invalid credentials");
 		}
 
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-		Query q = new Query("Post");
-
-		q.setKeysOnly();
-
-		q.setFilter(new FilterPredicate("url",FilterOperator.EQUAL,pm.url));
-
-		PreparedQuery pq = ds.prepare(q);
-		Entity toRemove = pq.asSingleEntity();
-
-		Transaction txn = ds.beginTransaction();
-
-		ds.delete(toRemove.getKey());
-
-		txn.commit();
+		Key toRemove = new Entity("Post",keyPost).getKey();
+		Entity post = ds.get(toRemove);
+		ds.delete(toRemove);
+		return post;
 	}
 }
