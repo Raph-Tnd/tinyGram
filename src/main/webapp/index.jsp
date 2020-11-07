@@ -6,92 +6,13 @@
 	<meta name="google-signin-scope" content="profile email">
 	<meta name="google-signin-client_id" content="1067622413243-kjhodo8vcomp32b0bpi84m47blnvkc1r.apps.googleusercontent.com">
 	<script src="https://apis.google.com/js/platform.js" async defer></script>
-	
-	<style>
-		@font-face {
-			font-family: 'Billabong';
-			font-style: normal;
-			font-weight: normal;
-			src: local('Billabong'), url('Billabong.woff') format('woff');
-		}
-		h1 {
-			text-align: center;
-			font-family:'Billabong';
-			font-weight: normal;
-			font-size: 100px;
-		}
-		#left { 
-			float: left;
-			width: 45%;
-			margin: 0;
-			top: 50%;
-			position: absolute;
-			/*border-width: 1px;
-			border-style: solid;
-			border-color: black;*/
-		}
-		#right { 
-			float: right; 
-			width: 45%;
-			left: 50%;
-			margin: 0;
-			top: 10%;
-			position: absolute;
-			/*border-width: 1px;
-			border-style: solid;
-			border-color: black;*/
-		}
-		#img {
-		}
-		a {
-			font-family:'Billabong';
-			font-weight: normal;
-			font-size: 20px;
-		}
-		.g-signin2{
-		  width: 100%;
-		}
-
-		.g-signin2 > div{
-		  margin: 0 auto;
-		}
-		.btn {
-			position: relative;
-			float: right;
-			text-decoration: none;
-			padding-left: 15px;
-			padding-right: 15px;
-			font-size: 1em;
-			color: #a5a5a5;
-			background-color: #ffffff;
-			border-radius: 10px;
-			box-shadow: 0px 0px 10px #d8d8d8;
-		}
-		.btnLink:link {
-			text-decoration: none
-		}
-		.btn:hover {
-			padding-left: 15px;
-			padding-right: 15px;
-			background-color: #f2f2f2;
-		}
-		.signature{
-			width: 100%;
-			position:absolute;
- 			bottom:0;
- 			text-align: center;
- 			font-size: 10px;
-		}
-		
-	</style>
+	<link rel="stylesheet" href="stylesheets/style.css">
 	<title>TinyGram</title>
 </head>
 
 <body>
 	<div id="left" class="vertically-centered">
-		<div id="img">
-			<p>IMAGE DE PRESENTATION</p>
-		</div>
+		<img class="frontImg" src="./frontImg.jpg" alt="TinyInsta front page image"/>
 	</div>
 	
 	<div id="right" class="vertically-centered">
@@ -114,8 +35,8 @@
 	        console.log("ID Token: " + id_token);
 	      }
 	    </script>
-	
-		<a href="#" onclick="signOut();">Sign out</a>
+	    <div class="line"></div>
+		<a href="#" onclick="signOut();" id="signOut">Sign out</a>
 		<script>
 		  function signOut() {
 			var auth2 = gapi.auth2.getAuthInstance();
@@ -124,9 +45,11 @@
 			});
 		  }
 		</script>
-		<button type="button" class="btn">
-			<a href='/profile' class=btnLink>Profil</a>
-		</button>
+		<div id="btnDiv">
+			<button type="button" class="btn">
+				<a href='/profile' class=btnLink>Profil</a>
+			</button>
+		</div>
 	</div>
 	<div class="signature">
 		<p>Louis NORMAND, Raphaël TENAUD  -Web & Cloud-</p>
