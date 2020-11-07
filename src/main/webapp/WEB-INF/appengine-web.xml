@@ -6,10 +6,13 @@
   <runtime>java8</runtime>
 
    <static-files>
-    <include path="/**.html" >
-    </include>
-    <include path="/**.js" >
-    </include>
+    <include path="/**.html"></include>
+    <include path="/**.js"></include>
+    <include path ="/**.woff"></include>
+    <include path ="/**.jpg"></include>
+    <include path ="/**.ttf"></include>
+    <include path ="/**.css"></include>
+    
     
   </static-files>
   <system-properties>
