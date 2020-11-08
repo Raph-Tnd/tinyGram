@@ -1,17 +1,14 @@
-html {
-	background-color: #EDEDED;
-}
 @font-face {
 	font-family: 'Billabong';
 	font-style: normal;
 	font-weight: normal;
-	src: local('Billabong'), url('Billabong.woff') format('woff');
+	src: local('fonts/Billabong'), url('fonts/Billabong.woff') format('woff');
 }
 @font-face {
 	font-family: 'cantarell';
 	font-style: normal;
 	font-weight: normal;
-	src: local('cantarell'), url('cantarell.ttf') format('truetype');
+	src: local('fonts/cantarell'), url('fonts/cantarell.ttf') format('truetype');
 }
 h1 {
 	text-align: center;

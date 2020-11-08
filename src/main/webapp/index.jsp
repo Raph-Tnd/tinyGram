@@ -6,7 +6,8 @@
 	<meta name="google-signin-scope" content="profile email">
 	<meta name="google-signin-client_id" content="1067622413243-kjhodo8vcomp32b0bpi84m47blnvkc1r.apps.googleusercontent.com">
 	<script src="https://apis.google.com/js/platform.js" async defer></script>
-	<link rel="stylesheet" href="stylesheets/style.css">
+	<link rel="stylesheet" href="stylesheets/index.css">
+	<link rel="stylesheet" href="stylesheets/common.css">
 	<script type="text/javascript" src="javascript/userManager.js"></script>
 	<title>TinyGram</title>
 </head>
