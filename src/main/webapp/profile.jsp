@@ -34,7 +34,7 @@
                 m("h1", {class: 'title'}, Profile.name),
                 m("img",{class: "profilePicture", "src":Profile.url}),
                 m("button",{class:"button", onclick: function(e) { Profile.loadList()}},"Msgs"),
-                m("div", {class: 'tile'}, m('div',{class:'tile is-child box'},m(PostForm))),
+                m("div", {class: 'tile'}, m('div',{class:'postForm'},m(PostForm))),
                 m("div",m(PostView,{profile: Profile}))
             ])
         },
@@ -114,21 +114,21 @@
                 },
                 [
                 m('div', {class:'field'},[
-                m("label", {class:'labelURL'},"URL"),
+                m("label", {class:'label'},"URL de l'image"),
                 m('div',{class:'control'}, m("input[type=text]", {
-                class:'input urlInput',
-                placeholder:"Your url",
+                class:'input',
+                placeholder:"URL",
                 oninput: function(e) {PostForm.url = e.target.value}})),
                 //		          m("img",{"src":this.url}),
                 ]),
                 m('div',{class:'field'},[
-                m("label", {class: 'label'},"Body"),
+                m("label", {class: 'label'},"Description"),
                 m('div',{class:'control'},m("input[type=textarea]", {
-                class:'textarea',
-                placeholder:"Your text",
+                class:'input',
+                placeholder:"Description",
                 oninput: function(e) { PostForm.body = e.target.value }})),
                 ]),
-                m('div',{class:'control'},m("button[type=submit]", {class:'button is-link'},"Post")),
+                m('div',{class:'control'},m("button[type=submit]", {class:'postButton'},"Publier")),
                 ])
             }
         }
