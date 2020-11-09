@@ -10,8 +10,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-    <link rel="stylesheet" href="stylesheets/profile.css">
-    <link rel="stylesheet" href="stylesheets/common.css">
+    <link rel="css" href="css/profile.css" type="text/css">
+    <link rel="css" href="css/common.css" type="text/css">
     
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 
@@ -34,15 +34,16 @@
                 m("h1", {class: 'title'}, Profile.name),
                 m("img",{class: "profilePicture", "src":Profile.url}),
                 m("button",{class:"button", onclick: function(e) { Profile.loadList()}},"Msgs"),
+                m("button",{class: "button", onclick: function (e) { Profile.createProfile()}}, "CreateProfile"),
                 m("div", {class: 'tile'}, m('div',{class:'postForm'},m(PostForm))),
                 m("div",m(PostView,{profile: Profile}))
             ])
         },
-        loadList: function() {
-            return m.request({
-                method: "GET",
-                url: "_ah/api/myApi/v1/collectionresponse_entity"+'?access_token=' + encodeURIComponent(Profile.ID)
-            })
+            loadList: function() {
+                return m.request({
+                    method: "GET",
+                    url: "_ah/api/myApi/v1/collectionresponse_entity"+'?access_token=' + encodeURIComponent(Profile.ID)
+                })
             .then(function(result) {
                 console.log("load_list:",result)
                 Profile.list=result.items
@@ -99,7 +100,21 @@
                 .catch(function(e) {
                     console.log(e.message)
                 })
+            },
+            createProfile: function(){
+                return m.request({
+                    method: "POST",
+                    url: "_ah/api/myApi/v1/profile/create"+'?access_token='+encodeURIComponent(Profile.ID),
+                })
+                .then(function(result){
+                    console.log(result)
+                })
+                .catch(function(e) {
+                    console.log(e.message , e.code)
+
+                })
             }
+
         }
         var PostForm = {
             url:"",
@@ -183,17 +198,27 @@
             }
         }
 
+
         m.route(document.body, "/logged", {
-          "/logged": { onmatch: function() {
-                        if (Profile.ID=="") {m.route.set("/login")}
-                        else return Profile
-                        }},
-          "/login": Login
+            "/:user":
+                m.request({
+                    method: "POST",
+                    url: "_ah/api/myApi/v1/profile/"+m.route.param("user"),
+                })
+                .then(function(result) {
+                    Profile.name = result.
+                })
+            ,
+            "/logged": { onmatch: function() {
+                if (Profile.ID=="") {m.route.set("/login")}
+                else return Profile
+                }},
+            "/login": Login
         })
 
 	</script>
 		<h1 id="mainTitle">TinyGram</h1>
-		<a href="/index.jsp" onclick="signOut()" id="signOutLink">Se déconnecter</a>
+		<a href="/index.html" onclick="signOut()" id="signOutLink">Se dï¿½connecter</a>
 	<script>
 		function signOut() {
 			var auth2 = gapi.auth2.getAuthInstance();

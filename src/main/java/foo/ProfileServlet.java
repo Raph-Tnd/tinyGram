@@ -9,10 +9,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet(name = "ProfileServlet", urlPatterns = {"/profile"})
+@WebServlet(name = "ProfileServlet", urlPatterns = {"/profile/*"})
 public class ProfileServlet extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        /*String user = req.getPathInfo();
+        req.setAttribute("profileQueried", user);
+         */
         RequestDispatcher rd = req.getRequestDispatcher("profile.html");
         rd.forward(req,resp);
     }
