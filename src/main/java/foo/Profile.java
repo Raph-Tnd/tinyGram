@@ -1,26 +1,49 @@
 package foo;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
+import com.google.appengine.api.datastore.Entity;
 
-@WebServlet(name = "ProfileServlet", urlPatterns = {"/profile"})
-public class Profile extends HttpServlet {
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher rd = req.getRequestDispatcher("profile.html");
-        rd.forward(req,resp);
+public class Profile {
+    private String name;
+    private String email;
+    private String ID;
+    private String url;
+    private String description;
+
+    public Profile(){ }
+
+    public String emailToUniqueName(){
+        String res = this.email.split("@")[0];
+        return res;
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String url = req.getParameter("url");
-        String description = req.getParameter("description");
-        PrintWriter writer = resp.getWriter();
+    public String getName(){
+        return name;
+    }
+
+    public String getEmail(){
+        return email;
+    }
+
+    public String getID(){
+        return ID;
+    }
+
+    public String getUrl(){
+        return url;
+    }
+
+    public String getDescription(){
+        return description;
+    }
+
+    public Entity createEntity(){
+        Entity e = new Entity("Profile",this.emailToUniqueName());
+        e.setProperty("name" , this.name);
+        e.setProperty("email", this.email);
+        e.setProperty("ID", this.ID);
+        e.setProperty("url",this.url);
+        e.setProperty("description",this.description);
+
+        return e;
     }
 }
