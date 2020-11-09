@@ -10,10 +10,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
-    <script defer
-            src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <link rel="stylesheet" href="stylesheets/profile.css">
+    <link rel="stylesheet" href="stylesheets/common.css">
+    
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 
 
     <script src="https://unpkg.com/mithril/mithril.js"></script>
@@ -31,11 +31,10 @@
             list:[],
             view: function(){
             return m('div', {class:'container'}, [
-                m("h1", {class: 'title'}, "name:"+Profile.name),
-                m("h2", {class: 'subtitle'}, "email:"+Profile.email),
-                m("img",{"src":Profile.url}),
+                m("h1", {class: 'title'}, Profile.name),
+                m("img",{class: "profilePicture", "src":Profile.url}),
                 m("button",{class:"button", onclick: function(e) { Profile.loadList()}},"Msgs"),
-                m("div", {class: 'tile'}, m('div',{class:'tile is-child box'},m(PostForm))),
+                m("div", {class: 'tile'}, m('div',{class:'postForm'},m(PostForm))),
                 m("div",m(PostView,{profile: Profile}))
             ])
         },
@@ -115,60 +114,52 @@
                 },
                 [
                 m('div', {class:'field'},[
-                m("label", {class:'label'},"URL"),
+                m("label", {class:'label'},"URL de l'image"),
                 m('div',{class:'control'}, m("input[type=text]", {
-                class:'input is-rounded',
-                placeholder:"Your url",
+                class:'input',
+                placeholder:"URL",
                 oninput: function(e) {PostForm.url = e.target.value}})),
                 //		          m("img",{"src":this.url}),
                 ]),
                 m('div',{class:'field'},[
-                m("label", {class: 'label'},"Body"),
+                m("label", {class: 'label'},"Description"),
                 m('div',{class:'control'},m("input[type=textarea]", {
-                class:'textarea',
-                placeholder:"Your text",
+                class:'input',
+                placeholder:"Description",
                 oninput: function(e) { PostForm.body = e.target.value }})),
                 ]),
-                m('div',{class:'control'},m("button[type=submit]", {class:'button is-link'},"Post")),
+                m('div',{class:'control'},m("button[type=submit]", {class:'postButton'},"Publier")),
                 ])
             }
         }
         var PostView = {
             view: function(vnode) {
                 return m('div', [
-                    m('div',{class:'subtitle'},"My Posts"),
-                    m('table', {class:'table is-striped',"table":"is-striped"},[
-                    m('tr', [
-                        m('th', {width:"50px"}, "like"),
-                        m('th', {width:"50px"}, "del"),
-                        m('th', {width:"50px"}, "Bodys"),
-                        m('th', {width:"50px"}, "Urls"),
-                        m('th', {width:"50px"}, "Like"),
-                    ]),
+                    m('div',{class:'subtitle'}),
                     vnode.attrs.profile.list.map(function(item) {
-                        return m("tr", [
-                            m("td", m("button", {onclick: function(e) {
-                            console.log("like:"+item.key.id)
-                            }},"like")),
-                            m("td", m("button", {onclick: function(e) {
+                        return m('div', {class:'postContainer'}, [
+                        	m('div', {class: 'likeDiv'},
+                            	m('a.link[href=#]', {class:'likeButton', onclick: function(e) { }},"like"),
+                            	m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
+                            ),
+                            m('a.link[href=#]', {class:'delButton', onclick: function(e) {
                                 e.preventDefault()
                                 Profile.deleteMessage(item.key.name)
-                            }},"del")),
-                            m('td', m('label', item.properties.body)),
-                            m('td', m('img', {class: 'is-rounded', 'src': item.properties.url})),
-                            m('td', m('label', item.properties.likec)),
-                            ])
-                        }),
-        //			    m("div", isError ? "An error occurred" : "Saved"),
-                        m('button',{
-                              class: 'button is-link',
-                              onclick: function(e) {vnode.attrs.profile.next()}
-                              },
-                          "Next"),
-                       ])
-                     ])
-                  }
-                }
+                            }},
+                            	m('img', {src:"img/trashIcon.png", class:'trashImg'}),
+                            ),
+                            m('div', {class: 'bodyDiv'},
+                            	m('label', {class: 'bodyPost'}, item.properties.body),
+                            ),
+                            m('img', {class: 'imagePost', 'src': item.properties.url}),
+                        ])
+                    }),
+                    m('a.link[href=#]',{class: 'nextButton', onclick: function(e) {vnode.attrs.profile.next()}},
+                		m("img", {src:"img/nextArrow.png", class:'nextImg'}),
+                	),
+            	])
+        	}
+        }
 
 
         function onSignIn(googleUser) {
@@ -201,6 +192,19 @@
         })
 
 	</script>
+		<h1 id="mainTitle">TinyGram</h1>
+		<a href="/index.jsp" onclick="signOut()" id="signOutLink">Se déconnecter</a>
+	<script>
+		function signOut() {
+			var auth2 = gapi.auth2.getAuthInstance();
+			if(auth2.isSignedIn.get()) {
+				auth2.signOut().then(function () {
+					//
+				});
+			}
+		}
+	</script>
+	<div class="line"></div>
 </body>
 </html>
 

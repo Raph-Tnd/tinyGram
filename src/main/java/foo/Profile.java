@@ -13,7 +13,7 @@ import java.io.PrintWriter;
 public class Profile extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher rd = req.getRequestDispatcher("profile.jsp");
+        RequestDispatcher rd = req.getRequestDispatcher("profile.html");
         rd.forward(req,resp);
     }
 

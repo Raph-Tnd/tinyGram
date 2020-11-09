@@ -1,0 +1,209 @@
+@font-face {
+	font-family: 'Billabong';
+	font-style: normal;
+	font-weight: normal;
+	src: local('fonts/Billabong'), url('fonts/Billabong.woff') format('woff');
+}
+@font-face {
+	font-family: 'cantarell';
+	font-style: normal;
+	font-weight: normal;
+	src: local('fonts/cantarell'), url('fonts/cantarell.ttf') format('truetype');
+}
+
+#mainTitle {
+	margin: 0;
+	font-family:'Billabong';
+	font-weight: normal;
+	font-size: 55px;
+	position: absolute;
+	text-align: center;
+	width: 100%;
+	height: 100px;
+	background-color: white;
+	position: absolute;
+}
+
+.container {
+	position: relative;
+	width:100%;
+}
+
+.title {
+	height: 10%;
+	font-size: 15px;
+	left: 110px;
+	top: 30px;
+	position: absolute;
+}
+
+.profilePicture {
+	margin: 10px;
+	height: 80px;
+	width: auto;
+	position: relative;
+	object-fit: contain;
+	border-radius: 50%;
+	border-style: solid;
+	border-width: 2px;
+	border-color: #C2C2C2;
+}
+#signOutLink, #signOutLink:visited {
+	position: relative;
+	z-index: 1;
+	float: right;
+	margin: 20px;
+	background-color: #C5C5C5;
+	color: white;
+	text-decoration: none;
+	padding: 14px 25px;
+}
+#signOutLink:hover {
+	background-color: #EDEDED;
+}
+.subtitle{
+	border-bottom: 2px solid #939393;
+	width: 90%;
+	left: 5%;
+	position: relative;
+	top: 20%;
+	text-align: center;
+	padding-bottom: 10px;
+}
+.imagePost {
+	height: auto;
+	width: 40%;
+	object-fit: contain;
+	border-radius: 5%;
+	left: 5%;
+	position: relative;
+	/*border: 1px solid black;*/
+}
+.postContainer {
+	width: 100%;
+	padding-top: 20px;
+}
+.likeButton, .likeButton:visited {
+	position: relative;
+	z-index: 1;
+	background-color: #C5C5C5;
+	color: white;
+	text-decoration: none;
+	padding: 5px 10px;
+	border-radius: 25%;
+}
+.likeButton:hover {
+	background-color: #EDEDED;
+}
+.likeCounter {
+	padding-left: 10px;
+}
+.bodyPost {
+	font-family:'cantarell';
+	font-weight: normal;
+	font-size: 20px;
+	padding : 5px;
+	position: absolute;
+}
+.bodyDiv {
+	position: relative;
+	left: 45%;
+	/*border: 1px solid black;*/
+	width: 20%;
+	height: auto;
+	margin-top: 10px;
+	margin-left: 10px;
+}
+.likeDiv {
+	/*border: 1px solid black;*/
+	left: 15%;
+	width: 50%;
+	position: relative;
+	width: 20%;
+	height: auto;
+}
+.delButton {
+	position:absolute;
+	width: auto;
+}
+.trashImg {
+	width: 20px;
+	height: auto;
+	margin: 20px;
+}
+.trashImg:hover {
+	width: 30px;
+	height: auto;
+	margin: 15px;
+}
+.nextButton {
+	position: absolute;
+	width: 100%;
+	
+}
+.nextImg {
+	height: auto;
+	width: 10%;
+	left: 45%;
+	position: relative;
+}
+.fieldBody {
+	/*border: 1px solid black;*/
+	width: 100%;
+}
+
+.label {
+	/*border: 1px solid black;*/
+	position: relative;
+	display: inline-block;
+	text-align: center;
+	width: 100%;
+	height: auto;
+	margin-top: 10px;
+}
+.input {
+	width: 90%;
+	height: 2em;
+	position: relative;
+	/*border: 1px solid black;*/
+	display: block;
+	left: 5%;
+}
+
+.postForm {
+	width: 100%;
+}
+.tile {
+	width: 100%;
+}
+.control {
+	position: relative;
+	width: 100%;
+}
+
+.postButton {
+	background-color:#c5c5c5;
+	display:inline-block;
+	cursor:pointer;
+	color: white;
+	font-family:Arial;
+	font-size:17px;
+	padding:16px 31px;
+	text-decoration:none;
+	border: 0px;
+	width: auto;
+	position: relative;
+	width: 10%;
+	left: 45%;
+	height: auto;
+	margin-top: 10px;
+	/*margin-left: auto;
+	margin-right: auto;*/
+}
+.postButton:hover {
+	background-color: #EDEDED;
+}
+.postButton:active {
+	position:relative;
+	top:1px;
+}
