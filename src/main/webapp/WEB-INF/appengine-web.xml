@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
 
-  <threadsafe>true</threadsafe>
+  <threadsafe>false</threadsafe>
   <sessions-enabled>true</sessions-enabled>
   <runtime>java8</runtime>
 
    <static-files>
     <include path="/**.html"></include>
     <include path="/**.js"></include>
-    <include path ="/**.woff"></include>
+    <include path ="/stylesheets/fonts/*.woff"></include>
     <include path ="/**.jpg"></include>
     <include path ="/**.png"></include>
-    <include path ="/**.ttf"></include>
-    <include path ="/**.css"></include>
+    <include path ="/stylesheets/fonts/*.ttf"></include>
+    <include path ="/stylesheets/*.css"></include>
     
     
   </static-files>
