@@ -30,14 +30,13 @@ import java.util.Date;
 
 public class ProfileEndpoint {
 
-    @ApiMethod(name = "getProfile", path = "profile/{profileName}",httpMethod = HttpMethod.GET)
+    @ApiMethod(name = "getProfile", path = "profile/get/{profileName}",httpMethod = HttpMethod.GET)
     public Entity getProfile(User user, @Named("profileName") String profileName) throws EntityNotFoundException {
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         Query q = new Query("Profile")
-                .setFilter(new FilterPredicate("email",FilterOperator.EQUAL,profileName))
-                .setKeysOnly();
+                .setFilter(new FilterPredicate("name",FilterOperator.EQUAL,profileName));
         PreparedQuery pq = ds.prepare(q);
-        Entity profile = ds.get(pq.asSingleEntity().getKey());
+        Entity profile = pq.asSingleEntity();
         return profile;
     }
 
