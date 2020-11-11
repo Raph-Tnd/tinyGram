@@ -1,16 +1,3 @@
-@font-face {
-	font-family: 'Billabong';
-	font-style: normal;
-	font-weight: normal;
-	src: local('fonts/Billabong'), url('fonts/Billabong.woff') format('woff');
-}
-@font-face {
-	font-family: 'cantarell';
-	font-style: normal;
-	font-weight: normal;
-	src: local('fonts/cantarell'), url('fonts/cantarell.ttf') format('truetype');
-}
-
 #mainTitle {
 	margin: 0;
 	font-family:'Billabong';
@@ -138,14 +125,9 @@
 }
 .nextButton {
 	position: absolute;
-	width: 100%;
-	
-}
-.nextImg {
 	height: auto;
 	width: 10%;
-	left: 45%;
-	position: relative;
+	left: 45%;,
 }
 .fieldBody {
 	/*border: 1px solid black;*/

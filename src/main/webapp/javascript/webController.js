@@ -161,9 +161,14 @@ var PostView = {
                     m('img', {class: 'imagePost', 'src': item.properties.url}),
                 ])
             }),
-            m('a.link[href=#]',{class: 'nextButton', onclick: function(e) {vnode.attrs.profile.next()}},
-                m("img", {src:"img/nextArrow.png", class:'nextImg'}),
-            ),
+            m("input", {
+            	type: "image",
+            	src: "/img/nextArrow.png",
+                class: "nextButton",
+                onclick: function(e) {}
+            		vnode.attrs.profile.next()
+        		},
+            }),
         ])
     }
 }

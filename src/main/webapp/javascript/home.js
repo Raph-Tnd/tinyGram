@@ -1,6 +1,6 @@
 var HomePage = {
     view: function(){
-        return m('div', {class:'container'},[
+        return m('div',[
             m('div', {id:'left', class:'vertically-centered'},
                 m('img', {class:'frontImg', src:'./frontImg.jpg', alt:'TinyInsta front page image'}),
             ),

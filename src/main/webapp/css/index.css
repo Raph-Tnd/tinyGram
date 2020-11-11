@@ -1,15 +1,3 @@
-@font-face {
-	font-family: 'Billabong';
-	font-style: normal;
-	font-weight: normal;
-	src: local('fonts/Billabong'), url('fonts/Billabong.woff') format('woff');
-}
-@font-face {
-	font-family: 'cantarell';
-	font-style: normal;
-	font-weight: normal;
-	src: local('fonts/cantarell'), url('fonts/cantarell.ttf') format('truetype');
-}
 h1 {
 	text-align: center;
 	font-family:'Billabong';
