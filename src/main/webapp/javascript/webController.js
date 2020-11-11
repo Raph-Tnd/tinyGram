@@ -185,6 +185,7 @@ var PostView = {
                 ])
             }),
             m("input", {
+
                 type: "image",
                 src: "/img/nextArrow.png",
                 class: "nextButton",
