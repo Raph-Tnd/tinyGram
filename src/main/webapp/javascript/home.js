@@ -9,9 +9,7 @@ var HomePage = {
                 m('div', {class:'g-signin2', "data-onsuccess":'onSignIn', "data-theme":'dark'}),
                 m('div', {class:'line'}),
                 m('div', {class:'btnDiv'},
-                    m('button', {type:'button', class:'btn', onclick: function(e){
-                        m.route.set("/profile/tenaudraphael")
-                    }},"Profile")
+                    m(m.route.Link,{href: "/profile/tenaudraphael", class:'btn'},"Profile")
                 )
             ),
             m('div', {class:'signature'},

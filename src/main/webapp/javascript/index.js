@@ -1,4 +1,3 @@
-
 function emailToUniqueName(email){
 	return email.split("@")[0];
 }
@@ -30,18 +29,11 @@ function onSignIn(googleUser) {
 	signOutLink.setAttribute('id', 'signOut');
 	var div = document.getElementById('right');
 	div.appendChild(signOutLink);
-	m.route.set("/profile/tenaudraphael");
+	Profile.createProfile();
 }
 
 
 m.route(document.body, "/",{
 	"/": HomePage,
-	"/logged":{onmatch: function(){
-		if (Profile.ID=="") {
-			console.log("Profile not found")
-			return Login
-		}
-		else return Profile
-	}},
 	"/profile/:user": PageProfile
 })

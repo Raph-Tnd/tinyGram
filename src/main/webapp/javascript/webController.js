@@ -11,7 +11,6 @@ var Profile={
             m("h1", {class: 'title'}, Profile.name),
             m("img",{class: "profilePicture", "src":Profile.url}),
             m("button",{class:"button", onclick: function(e) { Profile.loadList()}},"Msgs"),
-            m("button",{class: "button", onclick: function (e) { Profile.createProfile()}}, "CreateProfile"),
             m("div", {class: 'tile'}, m('div',{class:'postForm'},m(PostForm))),
             m("div",m(PostView,{profile: Profile}))
         ])
