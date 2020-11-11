@@ -8,7 +8,7 @@ import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.appengine.api.users.User;
+import com.google.api.server.spi.auth.common.User;
 
 import java.util.Date;
 import java.util.List;
@@ -27,60 +27,7 @@ import java.util.Random;
 
 public class ScoreEndpoint {
 
-	Random r = new Random();
 
-
-
-	@ApiMethod(name = "topscores", httpMethod = HttpMethod.GET)
-	public List<Entity> topscores() {
-		Query q = new Query("Score").addSort("score", SortDirection.DESCENDING);
-
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		PreparedQuery pq = datastore.prepare(q);
-		List<Entity> result = pq.asList(FetchOptions.Builder.withLimit(10));
-		return result;
-	}
-
-	@ApiMethod(name = "myscores", httpMethod = HttpMethod.GET)
-	public List<Entity> myscores(@Named("name") String name) {
-		Query q = new Query("Score").setFilter(new FilterPredicate("name", FilterOperator.EQUAL, name)).addSort("score",
-				SortDirection.DESCENDING);
-
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		PreparedQuery pq = datastore.prepare(q);
-		List<Entity> result = pq.asList(FetchOptions.Builder.withLimit(10));
-		return result;
-	}
-
-	@ApiMethod(name = "addScore", httpMethod = HttpMethod.GET)
-	public Entity addScore(@Named("score") int score, @Named("name") String name) {
-
-		Entity e = new Entity("Score", "" + name + score);
-		e.setProperty("name", name);
-		e.setProperty("score", score);
-
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		datastore.put(e);
-
-		return e;
-	}
-
-	@ApiMethod(name = "postMessage", httpMethod = HttpMethod.POST)
-	public Entity postMessage(PostMessage pm) {
-
-		Entity e = new Entity("Post"); // quelle est la clef ?? non specifié -> clef automatique
-		e.setProperty("owner", pm.owner);
-		e.setProperty("url", pm.url);
-		e.setProperty("body", pm.body);
-		e.setProperty("likec", 0);
-		e.setProperty("date", new Date());
-
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		Transaction txn = datastore.beginTransaction();
-		datastore.put(e);
-		txn.commit();
-		return e;
-	}
 
 	@ApiMethod(name = "mypost", httpMethod = HttpMethod.GET)
 	public CollectionResponse<Entity> mypost(@Named("name") String name, @Nullable @Named("next") String cursorString) {
@@ -115,17 +62,12 @@ public class ScoreEndpoint {
 	    
 	}
     
-	@ApiMethod(name = "getPost",
-		   httpMethod = HttpMethod.GET)
-	public CollectionResponse<Entity> getPost(User user, @Nullable @Named("next") String cursorString)
+	@ApiMethod(name = "getPost", path="profile/{username}/post",httpMethod = HttpMethod.GET)
+	public CollectionResponse<Entity> getPost(User user, @Nullable @Named("next") String cursorString, @Named("username") String username)
 			throws UnauthorizedException {
 
-		if (user == null) {
-			throw new UnauthorizedException("Invalid credentials");
-		}
-
 		Query q = new Query("Post").
-		    setFilter(new FilterPredicate("owner", FilterOperator.EQUAL, user.getEmail()));
+		    setFilter(new FilterPredicate("owner", FilterOperator.EQUAL, username));
 
 		// Multiple projection require a composite index
 		// owner is automatically projected...
@@ -166,28 +108,29 @@ public class ScoreEndpoint {
 		return null;
 	}
 
-	@ApiMethod(name = "postMsg", httpMethod = HttpMethod.POST)
+	@ApiMethod(name = "postMsg", path="postMsg", httpMethod = HttpMethod.POST)
 	public Entity postMsg(User user, PostMessage pm) throws UnauthorizedException {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		if (user == null) {
 			throw new UnauthorizedException("Invalid credentials");
 		}
 
-		Entity e = new Entity("Post", Long.MAX_VALUE-(new Date()).getTime()+":"+user.getEmail());
-		e.setProperty("owner", user.getEmail());
+
+		Entity e = new Entity("Post", Long.MAX_VALUE - (new Date()).getTime() + ":" + user.getEmail());
+		e.setProperty("owner", user.getEmail().split("@")[0]);
 		e.setProperty("url", pm.url);
 		e.setProperty("body", pm.body);
 		e.setProperty("likec", 0);
 		e.setProperty("date", new Date());
-
 ///		Solution pour pas projeter les listes
 //		Entity pi = new Entity("PostIndex", e.getKey());
 //		HashSet<String> rec=new HashSet<String>();
 //		pi.setProperty("receivers",rec);
-		
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
 		datastore.put(e);
 //		datastore.put(pi);
 		return e;
+
 	}
 
 	@ApiMethod(name = "deleteMsg", path = "deleteMsg/{keyPost}",httpMethod = HttpMethod.DELETE)

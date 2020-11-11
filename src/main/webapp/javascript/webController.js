@@ -1,14 +1,23 @@
+function entityToProfile(entity){
+    Profile.email = entity.properties.email;
+    Profile.name = entity.properties.name;
+    Profile.url = entity.properties.url;
+    Profile.loaded = true;
+}
+
 var Profile={
     name:"",
     email:"",
     ID:"",
     url:"",
     nextToken:"",
+    loaded:false,
     list:[],
     view: function(vnode){
-        Profile.getProfile(vnode.attrs.name);
+        Profile.loadProfile(vnode.attrs.name);
         return m('div', {class:'container'}, [
             m("h1", {class: 'title'}, Profile.name),
+            m("h1", {class: 'title'}, Profile.ID),
             m("img",{class: "profilePicture", "src":Profile.url}),
             m("button",{class:"button", onclick: function(e) { Profile.loadList()}},"Msgs"),
             m("div", {class: 'tile'}, m('div',{class:'postForm'},m(PostForm))),
@@ -18,21 +27,24 @@ var Profile={
     loadList: function() {
         return m.request({
             method: "GET",
-            url: "_ah/api/myApi/v1/collectionresponse_entity"+'?access_token=' + encodeURIComponent(Profile.ID)
+            url: "_ah/api/myApi/v1/profile/"+Profile.name+"/post"+'?access_token=' + encodeURIComponent(Profile.ID)
         })
-    .then(function(result) {
-        console.log("load_list:",result)
-        Profile.list=result.items
-        if ('nextPageToken' in result) {
-        Profile.nextToken= result.nextPageToken
-        } else {
-        Profile.nextToken=""
+        .then(function(result) {
+            console.log("load_list:",result)
+            Profile.list=result.items
+            if ('nextPageToken' in result) {
+                Profile.nextToken= result.nextPageToken
+            } else {
+                Profile.nextToken=""
         }})
+        .catch(function(e){
+            console.log(e)
+        })
     },
     next: function() {
         return m.request({
             method: "GET",
-            url: "_ah/api/myApi/v1/collectionresponse_entity",
+            url: "_ah/api/myApi/v1/profile/"+Profile.name+"/post",
             params: {
                 'next':Profile.nextToken,
                 'access_token': encodeURIComponent(Profile.ID)
@@ -48,21 +60,31 @@ var Profile={
             }
         })
     },
+    getMessage: function(){
+        return m.request({
+            method: "GET",
+            url: "_ah/api/myApi/v1/profile/"+Profile.name+"/getMessage"+encodeURIComponent(Profile.ID),
+        })
+        .then(function(result){
+
+        })
+    },
     postMessage: function(desc,url) {
+        console.log(Profile.ID);
         var data={'url': url,
             'body': desc}
-        console.log("post:"+data)
-        if (data.url != ""){
-            return m.request({
-                method: "POST",
-                url: "_ah/api/myApi/v1/postMsg"+'?access_token='+encodeURIComponent(Profile.ID),
-                params: data,
-            })
-            .then(function(result) {
-                console.log("post_message:",result)
-                Profile.loadList()
-            })
-        }
+        return m.request({
+            method: "POST",
+            url: "_ah/api/myApi/v1/postMsg"+'?access_token='+encodeURIComponent(Profile.ID),
+            params: data,
+        })
+        .then(function(result) {
+            console.log("post_message:",result)
+            //Profile.loadList()
+        })
+        .catch(function(e){
+            console.log(e)
+        })
     },
     deleteMessage: function(name) {
         return m.request({
@@ -90,21 +112,22 @@ var Profile={
 
         })
     },
+    loadProfile: function(profileName){
+        if (!Profile.loaded){
+            Profile.getProfile(profileName)
+        }
+    },
     getProfile: function(profileName){
-        m.request({
+        return m.request({
             method: "GET",
             url: "_ah/api/myApi/v1/profile/get/"+profileName+'?access_token='+encodeURIComponent(Profile.ID),
-
         })
         .then(function (result){
-            Profile.email = result.properties.email;
-            Profile.name = result.properties.name;
-            Profile.url = result.properties.url;
+            entityToProfile(result)
         })
         .catch(function(e){
             console.log("message: ",e.messages,"code: ", e.code)
         })
-
     }
 
 }
@@ -115,7 +138,7 @@ var PostForm = {
         return m("form", {
             onsubmit: function(e) {
                 e.preventDefault()
-                if (url ="") {console.log("No url")}
+                if (url ="") {return ;}
                 Profile.postMessage(PostForm.body,PostForm.url)
             }
         },
@@ -150,9 +173,9 @@ var PostView = {
                         m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
                     ),
                     m('a.link[href=#]', {class:'delButton', onclick: function(e) {
-                        e.preventDefault()
-                        Profile.deleteMessage(item.key.name)
-                    }},
+                                e.preventDefault()
+                                Profile.deleteMessage(item.key.name)
+                            }},
                         m('img', {src:"img/trashIcon.png", class:'trashImg'}),
                     ),
                     m('div', {class: 'bodyDiv'},
@@ -162,12 +185,13 @@ var PostView = {
                 ])
             }),
             m("input", {
-            	type: "image",
-            	src: "/img/nextArrow.png",
+
+                type: "image",
+                src: "/img/nextArrow.png",
                 class: "nextButton",
-                onclick: function(e) {}
-            		vnode.attrs.profile.next()
-        		},
+                onclick: function(e) {
+                    vnode.attrs.profile.next()
+                },
             }),
         ])
     }
