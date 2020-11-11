@@ -5,6 +5,7 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiMethod.HttpMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.config.Named;
+import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.datastore.Query.FilterOperator;
@@ -29,28 +30,33 @@ import java.util.Date;
 
 public class ProfileEndpoint {
 
-    @ApiMethod(name = "getProfile", path = "/profile/{profileName}",httpMethod = HttpMethod.GET)
+    @ApiMethod(name = "getProfile", path = "profile/get/{profileName}",httpMethod = HttpMethod.GET)
     public Entity getProfile(User user, @Named("profileName") String profileName) throws EntityNotFoundException {
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        Query q = new Query("Profile")
-                .setFilter(new FilterPredicate("email",FilterOperator.EQUAL,profileName))
-                .setKeysOnly();
-        PreparedQuery pq = ds.prepare(q);
-        Entity profile = ds.get(pq.asSingleEntity().getKey());
+        Key profileKey = new Entity("Profile", profileName).getKey();
+        Entity profile = ds.get(profileKey);
         return profile;
     }
 
-    @ApiMethod(name = "createProfile", path = "/profile/create", httpMethod = HttpMethod.POST)
-    public Entity createProfile(User user, Profile profile){
-        Entity e = new Entity("Profile", Long.MAX_VALUE-(new Date()).getTime()+":"+user.getEmail());
-        e.setProperty("name", profile.getName());
-        e.setProperty("email", profile.getEmail());
-        e.setProperty("ID", profile.getID());
-        e.setProperty("url", profile.getUrl());
-
+    @ApiMethod(name = "createProfile", path = "profile/create", httpMethod = HttpMethod.POST)
+    public Entity createProfile(User user) throws UnauthorizedException {
+        Entity entityFound = null;
+        if (user == null) {
+            throw new UnauthorizedException("Invalid credentials");
+        }
+        Entity e = new Profile(user.getEmail()).createEntity();
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        ds.put(e);
-        return e;
-
+        try{
+            entityFound = ds.get(e.getKey());
+        }
+        catch (EntityNotFoundException exc) {
+            entityFound = null;
+        }
+        if (entityFound == null){
+            ds.put(e);
+            return e;
+        }else{
+            return entityFound;
+        }
     }
 }

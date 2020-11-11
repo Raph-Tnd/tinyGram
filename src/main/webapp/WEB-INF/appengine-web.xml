@@ -8,11 +8,11 @@
    <static-files>
     <include path="/**.html"></include>
     <include path="/**.js"></include>
-    <include path ="/stylesheets/fonts/*.woff"></include>
+    <include path ="/**.woff"></include>
     <include path ="/**.jpg"></include>
     <include path ="/**.png"></include>
-    <include path ="/stylesheets/fonts/*.ttf"></include>
-    <include path ="/stylesheets/*.css"></include>
+    <include path ="/**.ttf"></include>
+    <include path ="/**.css"></include>
     
     
   </static-files>
