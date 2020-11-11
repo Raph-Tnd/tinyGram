@@ -1,12 +1,20 @@
+function entityToProfile(entity){
+    Profile.email = entity.properties.email;
+    Profile.name = entity.properties.name;
+    Profile.url = entity.properties.url;
+    Profile.loaded = true;
+}
+
 var Profile={
     name:"",
     email:"",
     ID:"",
     url:"",
     nextToken:"",
+    loaded:false,
     list:[],
     view: function(vnode){
-        Profile.getProfile(vnode.attrs.name);
+        Profile.loadProfile(vnode.attrs.name);
         return m('div', {class:'container'}, [
             m("h1", {class: 'title'}, Profile.name),
             m("img",{class: "profilePicture", "src":Profile.url}),
@@ -90,21 +98,22 @@ var Profile={
 
         })
     },
+    loadProfile: function(profileName){
+        if (!Profile.loaded){
+            Profile.getProfile(profileName)
+        }
+    },
     getProfile: function(profileName){
-        m.request({
+        return m.request({
             method: "GET",
             url: "_ah/api/myApi/v1/profile/get/"+profileName+'?access_token='+encodeURIComponent(Profile.ID),
-
         })
         .then(function (result){
-            Profile.email = result.properties.email;
-            Profile.name = result.properties.name;
-            Profile.url = result.properties.url;
+            entityToProfile(result)
         })
         .catch(function(e){
             console.log("message: ",e.messages,"code: ", e.code)
         })
-
     }
 
 }
