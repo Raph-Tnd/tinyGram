@@ -1,8 +1,4 @@
-function entityToProfile(entity){
-	Profile.email = entity.properties.email;
-	Profile.name = entity.properties.name;
-	Profile.url = entity.properties.url;
-}
+
 function emailToUniqueName(email){
 	return email.split("@")[0];
 }
@@ -47,18 +43,5 @@ m.route(document.body, "/",{
 		}
 		else return Profile
 	}},
-	"/profile/:user":{onmatch: function (){
-		m.request({
-			method: "GET",
-			url: "_ah/api/myApi/v1/profile/get/:user"+'?access_token='+encodeURIComponent(Profile.ID)
-		})
-		.then(function (result){
-			console.log(result)
-			entityToProfile(result)
-			return Profile
-		})
-		.catch(function(e){
-			console.log(e.messages, e.code)
-		})
-	}}
+	"/profile/:user": PageProfile
 })

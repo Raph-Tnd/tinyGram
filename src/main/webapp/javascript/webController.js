@@ -5,7 +5,8 @@ var Profile={
     url:"",
     nextToken:"",
     list:[],
-    view: function(){
+    view: function(vnode){
+        Profile.getProfile(vnode.attrs.name);
         return m('div', {class:'container'}, [
             m("h1", {class: 'title'}, Profile.name),
             m("img",{class: "profilePicture", "src":Profile.url}),
@@ -90,19 +91,21 @@ var Profile={
 
         })
     },
-    loadProfile: function(name){
-        return m.request({
+    getProfile: function(profileName){
+        m.request({
             method: "GET",
-            url: "_ah/api/myApi/v1/profile/get/"+name,
+            url: "_ah/api/myApi/v1/profile/get/"+profileName+'?access_token='+encodeURIComponent(Profile.ID),
+
         })
         .then(function (result){
-            console.log("searching found")
-            entityToProfile(result)
-            return Profile
+            Profile.email = result.properties.email;
+            Profile.name = result.properties.name;
+            Profile.url = result.properties.url;
         })
-        .catch(function(e) {
-            console.log(e.message)
+        .catch(function(e){
+            console.log("message: ",e.messages,"code: ", e.code)
         })
+
     }
 
 }
@@ -167,6 +170,9 @@ var PostView = {
 }
 
 var PageProfile = {
+    view: function(vnode){
+        return m(Profile, {name: vnode.attrs.user})
+    }
 
 }
 var Login = {

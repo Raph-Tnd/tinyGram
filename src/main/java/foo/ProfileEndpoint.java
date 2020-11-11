@@ -33,10 +33,8 @@ public class ProfileEndpoint {
     @ApiMethod(name = "getProfile", path = "profile/get/{profileName}",httpMethod = HttpMethod.GET)
     public Entity getProfile(User user, @Named("profileName") String profileName) throws EntityNotFoundException {
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        Query q = new Query("Profile")
-                .setFilter(new FilterPredicate("name",FilterOperator.EQUAL,profileName));
-        PreparedQuery pq = ds.prepare(q);
-        Entity profile = pq.asSingleEntity();
+        Key profileKey = new Entity("Profile", profileName).getKey();
+        Entity profile = ds.get(profileKey);
         return profile;
     }
 
