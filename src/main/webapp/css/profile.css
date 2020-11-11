@@ -138,14 +138,9 @@
 }
 .nextButton {
 	position: absolute;
-	width: 100%;
-	
-}
-.nextImg {
 	height: auto;
 	width: 10%;
-	left: 45%;
-	position: relative;
+	left: 45%;,
 }
 .fieldBody {
 	/*border: 1px solid black;*/
