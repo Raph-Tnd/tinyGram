@@ -4,7 +4,27 @@ function entityToProfile(entity){
     Profile.url = entity.properties.url;
     Profile.loaded = true;
 }
+var controller = {
+    authInstance : "",
+    currentUserSignedIn: false,
+    currentUserIsSigned: function (){
+        this.currentUserSignedIn = this.authInstance.isSignedIn.get()
+    },
+    listenUser: function(){
 
+    },
+    loadGoogleUser: function(){
+        var profile = this.authInstance.currentUser.get().getBasicProfile();
+        var id_token =this.authInstance.currentUser.get().getAuthResponse().id_token;
+        Profile.name=emailToUniqueName(profile.getEmail());
+        Profile.email=profile.getEmail();
+        Profile.ID=id_token;
+        Profile.url=profile.getImageUrl();
+    },
+    disconnectUser: function (){
+        this.authInstance.currentUser.get().disconnect();
+    }
+}
 var Profile={
     name:"",
     email:"",
@@ -17,15 +37,13 @@ var Profile={
         Profile.loadProfile(vnode.attrs.name);
         return m('div', {class:'container'}, [
             m("h1", {class: 'title'}, Profile.name),
-            m("h1", {class: 'title'}, Profile.ID),
             m("img",{class: "profilePicture", "src":Profile.url}),
             m("button",{class:"button", onclick: function(e) { Profile.loadList()}},"Msgs"),
             m("div", {class: 'tile'}, m('div',{class:'postForm'},m(PostForm))),
             m("div",m(PostView,{profile: Profile}))
         ])
 },
-    loadList: function() {
-        return m.request({
+    loadList: function() {request({
             method: "GET",
             url: "_ah/api/myApi/v1/profile/"+Profile.name+"/post"+'?access_token=' + encodeURIComponent(Profile.ID)
         })
@@ -60,17 +78,7 @@ var Profile={
             }
         })
     },
-    getMessage: function(){
-        return m.request({
-            method: "GET",
-            url: "_ah/api/myApi/v1/profile/"+Profile.name+"/getMessage"+encodeURIComponent(Profile.ID),
-        })
-        .then(function(result){
-
-        })
-    },
     postMessage: function(desc,url) {
-        console.log(Profile.ID);
         var data={'url': url,
             'body': desc}
         return m.request({
@@ -118,6 +126,7 @@ var Profile={
         }
     },
     getProfile: function(profileName){
+
         return m.request({
             method: "GET",
             url: "_ah/api/myApi/v1/profile/get/"+profileName+'?access_token='+encodeURIComponent(Profile.ID),
@@ -128,7 +137,8 @@ var Profile={
         .catch(function(e){
             console.log("message: ",e.messages,"code: ", e.code)
         })
-    }
+    },
+
 
 }
 var PostForm = {
@@ -137,7 +147,6 @@ var PostForm = {
     view: function() {
         return m("form", {
             onsubmit: function(e) {
-                e.preventDefault()
                 if (url ="") {return ;}
                 Profile.postMessage(PostForm.body,PostForm.url)
             }
@@ -173,7 +182,6 @@ var PostView = {
                         m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
                     ),
                     m('a.link[href=#]', {class:'delButton', onclick: function(e) {
-                                e.preventDefault()
                                 Profile.deleteMessage(item.key.name)
                             }},
                         m('img', {src:"img/trashIcon.png", class:'trashImg'}),
@@ -203,54 +211,6 @@ var PageProfile = {
     }
 
 }
-var Login = {
-    view: function() {
-        return m('div', {class:'container'}, [
-        m("h1", {class: 'title'}, 'The TinyGram Post'),
-        m("div", {
-            "class":"g-signin2",
-            "data-theme":"dark",
-            "data-onsuccess": "onSignIn"}),
-        m('div', {type:'button', class:'btn',onclick: function (e){
-            signOut()
-        }})
-        ])
-    }
-}
-
-
-/*m.route(document.body, "/logged", {
-    "/logged":{onmatch: function(){
-        if (Profile.ID=="") {
-            console.log("Profile not found")
-            return Login
-        }
-        else return Profile
-    }},
-    "/profile/:user": {onmatch: function (){
-        console.log("user searching")
-        if (m.route.params("user") == "logged"){
-            if (Profile.ID=="") {
-                console.log("Profile not found")
-                return Login
-            }
-            else return Profile
-        }
-        else{
-            return m.request({
-                method: "GET",
-                url: "_ah/api/myApi/v1/profile/get/"+ m.route.params("user"),
-            })
-            .then(function (result){
-                console.log(result)
-            })
-            .catch(function(e) {
-                console.log(e.message)
-            })
-        }
-    }}
-})
-*/
 
 
 

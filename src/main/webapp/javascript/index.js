@@ -12,28 +12,42 @@ function signOut() {
 	}
 }
 
-function onSignIn(googleUser) {
-	var profile = googleUser.getBasicProfile();
-	var id_token = googleUser.getAuthResponse().id_token;
-
-	Profile.name=profile.getName();
-	Profile.email=profile.getEmail();
-	Profile.ID=googleUser.getAuthResponse().id_token;
-	Profile.url=profile.getImageUrl();
-
-	const signOutLink = document.createElement('a');
-	signOutLink.innerHTML = 'Sign Out';
-	signOutLink.setAttribute('title', 'Sign Out');
-	signOutLink.setAttribute('href', '#');
-	signOutLink.setAttribute('onclick', 'signOut()');
-	signOutLink.setAttribute('id', 'signOut');
-	var div = document.getElementById('right');
-	div.appendChild(signOutLink);
-	Profile.createProfile();
+function onInit(){
+	controller.authInstance = gapi.auth2.getAuthInstance();
+	//controller.authInstance.currentUser.listen();
+	controller.loadGoogleUser();
 }
 
+function gapiRender(id){
+	gapi.signin2.render(id,{
+		scope: 'profile email',
+		width: 250,
+		height: 50,
+		longtitle: true,
+		theme: 'dark',
+		onsuccess: onInit,
+		onfailure: onError
+	})
+}
+
+function onError(){
+	console.log("Google auth error");
+}
+
+function init(){
+	gapi.load('auth2',function (){
+		gapi.auth2.init({
+			client_id: '1067622413243-kjhodo8vcomp32b0bpi84m47blnvkc1r.apps.googleusercontent.com'
+		})
+		.then(onInit,onError)
+	});
+}
 
 m.route(document.body, "/",{
-	"/": HomePage,
+	"/": {
+		view:function(){
+			return m(HomePage)
+		}
+	},
 	"/profile/:user": PageProfile
 })
