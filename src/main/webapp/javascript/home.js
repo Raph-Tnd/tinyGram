@@ -1,7 +1,4 @@
 var HomePage = {
-    oncreate : function(){
-        gapiRender("sign-in-login");
-    },
     view: function(){
         return m('div',[
             m('div', {id:'left', class:'vertically-centered'},
@@ -9,22 +6,18 @@ var HomePage = {
             ),
             m('div', {id:'right', class:'vertically-centered'},
                 m('h1', "TinyGram"),
-                /*m('button', {onclick:function (){
-                        gapiRender('sign-in-login');
-                    }},"create Login"),
-
-                 */
-                m('div', [
-                    m('div', "Login with Google"),
-                    m('div', {id : 'sign-in-login'}),
-                ]),
+                m('div', {id : "sign-in-login"}),
                 m('div', {class:'line'}),
                 m('div', {class:'btnDiv'},[
-                        m(m.route.Link,{href: "/profile/"+emailToUniqueName(Profile.email), class:'btn'}),
-                ])
+                        m(m.route.Link,{href: "/profile/"+emailToUniqueName(Profile.email), class:'btn'},"Profile"),
+                ]),
+                m('button',{class:'btnDiv', onclick: function(){
+                    controller.disconnectUser();
+                    }},"Disconnect")
             ),
             m('div', {class:'signature'},
-                m('p','Louis NORMAND, Rapha�l TENAUD  -Web & Cloud-'))
+                m.trust('<p>' +
+                    'Louis NORMAND, Raphaël TENAUD, Sylvain BEAUDOIN, Thibault COLIN  -Web & Cloud-</p>'))
         ])
     }
 }

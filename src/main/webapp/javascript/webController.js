@@ -6,26 +6,57 @@ function entityToProfile(entity){
 }
 var controller = {
     authInstance : "",
+    currentUser: "",
     currentUserSignedIn: false,
     currentUserIsSigned: function (){
-        this.currentUserSignedIn = this.authInstance.isSignedIn.get()
+        this.currentUserSignedIn = this.authInstance.isSignedIn.get();
     },
-    listenUser: function(){
-
+    setGoogleAuth: function(googleAuth){
+        this.authInstance = googleAuth;
+        console.log("Calling listener");
+        controller.authInstance.currentUser.listen(controller.listenerGoogleUser);
     },
     loadGoogleUser: function(){
-        var profile = this.authInstance.currentUser.get().getBasicProfile();
-        var id_token =this.authInstance.currentUser.get().getAuthResponse().id_token;
+        console.log("loadGoogleUser");
+        Profile.currentUser = this.authInstance.currentUser.get();
+        if (this.currentUser == ""){
+            console.log("failed");
+
+        }
+        console.log("success");
+        var profile = this.currentUser.getBasicProfile();
+        var id_token =this.currentUser.getAuthResponse().id_token;
         Profile.name=emailToUniqueName(profile.getEmail());
         Profile.email=profile.getEmail();
         Profile.ID=id_token;
-        Profile.url=profile.getImageUrl();
     },
     disconnectUser: function (){
-        this.authInstance.currentUser.get().disconnect();
+        console.log("disconnectUser");
+        var temp = this.authInstance.currentUser.get();
+        if (temp == null){return;}
+        temp.disconnect();
+    },
+    listenerGoogleUser: function(){
+        if (controller.authInstance.isSignedIn.get()){
+            this.currentUser = controller.authInstance.currentUser.get();
+            var profile = this.currentUser.getBasicProfile();
+            var id_token =this.currentUser.getAuthResponse().id_token;
+            Profile.name=emailToUniqueName(profile.getEmail());
+            console.log(Profile.name);
+            Profile.email=profile.getEmail();
+            Profile.ID=id_token;
+            console.log("Call redirect");
+            controller.redirectTimeline();
+        }
+    },
+    redirectTimeline: function(){
+        //wait for Profile.name to be updated when logging in before redirecting to User's Timeline
+        console.log("redirecting to /profile/"+Profile.name);
+        m.route.set("/profile/"+Profile.name);
     }
 }
-var Profile={
+
+var Profile = {
     name:"",
     email:"",
     ID:"",

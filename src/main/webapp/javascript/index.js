@@ -2,23 +2,15 @@ function emailToUniqueName(email){
 	return email.split("@")[0];
 }
 
-function signOut() {
-	var auth2 = gapi.auth2.getAuthInstance();
-	if(auth2.isSignedIn.get()) {
-		auth2.signOut().then(function () {
-			var signOutLink = document.getElementById('signOut');
-			signOutLink.remove();
-		});
-	}
-}
-
 function onInit(){
-	controller.authInstance = gapi.auth2.getAuthInstance();
-	//controller.authInstance.currentUser.listen();
-	controller.loadGoogleUser();
+	console.log("onInit");
+	controller.setGoogleAuth(gapi.auth2.getAuthInstance());
+	//controller.loadGoogleUser();
+
 }
 
 function gapiRender(id){
+	console.log("Rendering");
 	gapi.signin2.render(id,{
 		scope: 'profile email',
 		width: 250,
@@ -30,16 +22,21 @@ function gapiRender(id){
 	})
 }
 
+function renderLogin(){
+	gapiRender("sign-in-login");
+}
+
 function onError(){
 	console.log("Google auth error");
 }
 
 function init(){
+	console.log("init");
 	gapi.load('auth2',function (){
 		gapi.auth2.init({
 			client_id: '1067622413243-kjhodo8vcomp32b0bpi84m47blnvkc1r.apps.googleusercontent.com'
 		})
-		.then(onInit,onError)
+		.then(renderLogin,onError)
 	});
 }
 
