@@ -7,18 +7,19 @@ function entityToProfile(entity){
 var controller = {
     authInstance : "",
     currentUser: "",
-    currentUserSignedIn: false,
-    currentUserIsSigned: function (){
-        this.currentUserSignedIn = this.authInstance.isSignedIn.get();
-    },
     setGoogleAuth: function(googleAuth){
         this.authInstance = googleAuth;
         console.log("Calling listener");
         controller.authInstance.currentUser.listen(controller.listenerGoogleUser);
+        //if user already signed in, redirect automatically
+        if (controller.authInstance.isSignedIn.get()){
+            controller.loadGoogleUser();
+            controller.redirectTimeline();
+        }
     },
     loadGoogleUser: function(){
         console.log("loadGoogleUser");
-        Profile.currentUser = this.authInstance.currentUser.get();
+        this.currentUser = this.authInstance.currentUser.get();
         if (this.currentUser == ""){
             console.log("failed");
 
@@ -37,15 +38,11 @@ var controller = {
         temp.disconnect();
     },
     listenerGoogleUser: function(){
+        console.log("listening");
         if (controller.authInstance.isSignedIn.get()){
-            this.currentUser = controller.authInstance.currentUser.get();
-            var profile = this.currentUser.getBasicProfile();
-            var id_token =this.currentUser.getAuthResponse().id_token;
-            Profile.name=emailToUniqueName(profile.getEmail());
-            console.log(Profile.name);
-            Profile.email=profile.getEmail();
-            Profile.ID=id_token;
+            this.loadGoogleUser();
             console.log("Call redirect");
+            Profile.createProfile();
             controller.redirectTimeline();
         }
     },
@@ -157,7 +154,6 @@ var Profile = {
         }
     },
     getProfile: function(profileName){
-
         return m.request({
             method: "GET",
             url: "_ah/api/myApi/v1/profile/get/"+profileName+'?access_token='+encodeURIComponent(Profile.ID),
@@ -240,8 +236,13 @@ var PageProfile = {
     view: function(vnode){
         return m(Profile, {name: vnode.attrs.user})
     }
-
 }
 
+var TimeLine = {
+    list: [],
+    view: function(){
+
+    }
+}
 
 

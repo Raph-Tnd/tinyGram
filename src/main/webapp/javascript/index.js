@@ -5,7 +5,6 @@ function emailToUniqueName(email){
 function onInit(){
 	console.log("onInit");
 	controller.setGoogleAuth(gapi.auth2.getAuthInstance());
-	//controller.loadGoogleUser();
 
 }
 
@@ -46,5 +45,6 @@ m.route(document.body, "/",{
 			return m(HomePage)
 		}
 	},
+	"/timeline": TimeLine,
 	"/profile/:user": PageProfile
 })
