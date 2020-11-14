@@ -1,4 +1,13 @@
 var HomePage = {
+    view: function (){
+        return m(Home)
+    }
+}
+var Home = {
+    oncreate: function(){
+        console.log("Calling render");
+        gapiRender("sign-in-login");
+    },
     view: function(){
         return m('div',[
             m('div', {id:'left', class:'vertically-centered'},
@@ -10,10 +19,7 @@ var HomePage = {
                 m('div', {class:'line'}),
                 m('div', {class:'btnDiv'},[
                         m(m.route.Link,{href: "/profile/"+emailToUniqueName(Profile.email), class:'btn'},"Profile"),
-                ]),
-                m('button',{class:'btnDiv', onclick: function(){
-                    controller.disconnectUser();
-                    }},"Disconnect")
+                ])
             ),
             m('div', {class:'signature'},
                 m.trust('<p>' +

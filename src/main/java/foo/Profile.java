@@ -23,6 +23,19 @@ public class Profile {
         return res;
     }
 
+    public void setDescription(String desc){
+        this.description = desc;
+    }
+
+    public Entity createEntity(){
+        Entity e = new Entity("Profile",this.emailToUniqueName());
+        e.setProperty("name" , this.name);
+        e.setProperty("email", this.email);
+        e.setProperty("url",this.url);
+        e.setProperty("description",this.description);
+        return e;
+    }
+
     public String getName(){
         return name;
     }
@@ -30,7 +43,6 @@ public class Profile {
     public String getEmail(){
         return email;
     }
-
 
     public String getUrl(){
         return url;
@@ -40,13 +52,4 @@ public class Profile {
         return description;
     }
 
-    public Entity createEntity(){
-        Entity e = new Entity("Profile",this.emailToUniqueName());
-        e.setProperty("name" , this.name);
-        e.setProperty("email", this.email);
-        e.setProperty("url",this.url);
-        e.setProperty("description",this.description);
-
-        return e;
-    }
 }
