@@ -2,12 +2,14 @@ function entityToProfile(entity){
     Profile.email = entity.properties.email;
     Profile.name = entity.properties.name;
     Profile.url = entity.properties.url;
-    Profile.loaded = true;
 }
+
 var controller = {
     authInstance : "",
     currentUser: "",
     loginButton:false,
+    checkUserIsProfile:false,
+    profileCheck: "",
     setGoogleAuth: function(googleAuth){
         this.authInstance = googleAuth;
         console.log("Calling listener");
@@ -65,20 +67,32 @@ var Profile = {
     ID:"",
     url:"",
     nextToken:"",
-    loaded:false,
+    userIsProfile:false,
     list:[],
     view: function(vnode){
-        Profile.loadProfile(vnode.attrs.name);
-        return m('div', {class:'container'}, [
-            m("h1", {class: 'title'}, Profile.name),
-            m("img",{class: "profilePicture", "src":Profile.url}),
-            m("button",{class:"button", onclick: function(e) { Profile.loadList()}},"Msgs"),
-            m('button',{class:'btnDiv', onclick: function(){
-                    controller.disconnectUser();
-            }},"Disconnect"),
-            m("div", {class: 'tile'}, m('div',{class:'postForm'},m(PostForm))),
-            m("div",m(PostView,{profile: Profile}))
-        ])
+        if(Profile.name ==""){
+            Profile.loadProfile(vnode.attrs.name);
+        }
+        if(this.userIsProfile){
+            return m('div', {class:'container'}, [
+                m("h1", {class: 'title'}, Profile.name),
+                m("img",{class: "profilePicture", "src":Profile.url}),
+                m("button",{class:"button", onclick: function(e) { Profile.loadList()}},"Msgs"),
+                m('button',{class:'btnDiv', onclick: function(){
+                        controller.disconnectUser();
+                    }},"Disconnect"),
+                m("div", {class: 'tile'}, m('div',{class:'postForm'},m(PostForm))),
+                m("div",m(PostView,{profile: Profile}))
+            ])
+        }else{
+            return m('div', {class:'container'}, [
+                m("h1", {class: 'title'}, Profile.name),
+                m("img",{class: "profilePicture", "src":Profile.url}),
+                m("button",{class:"button", onclick: function(e) { Profile.loadList()}},"Msgs"),
+                m("div",m(PostView,{profile: Profile}))
+            ])
+        }
+
     },
     loadList: function() {
         return m.request({
@@ -159,15 +173,27 @@ var Profile = {
         })
     },
     loadProfile: function(profileName){
-        if (!Profile.loaded){
-            Profile.getProfile(profileName)
-            Profile.loaded = false;
+        console.log(controller.authInstance);
+        if(controller.authInstance == ""){
+            controller.checkUserIsProfile = true;
+            controller.profileCheck = profileName;
+            return;
         }
+        if(controller.authInstance.isSignedIn.get()){
+            if(profileName == emailToUniqueName(controller.currentUser.getBasicProfile().getEmail())){
+                this.userIsProfile = true;
+            }else{
+                this.userIsProfile = false;
+            }
+        }
+        this.getProfile(profileName);
+
     },
     getProfile: function(profileName){
+        console.log("Call getProfile");
         return m.request({
             method: "GET",
-            url: "_ah/api/myApi/v1/profile/get/"+profileName+'?access_token='+encodeURIComponent(Profile.ID),
+            url: "_ah/api/myApi/v1/profile/get/"+profileName,
         })
         .then(function (result){
             entityToProfile(result)
@@ -214,21 +240,35 @@ var PostView = {
         return m('div', [
             m('div',{class:'subtitle'}),
             vnode.attrs.profile.list.map(function(item) {
-                return m('div', {class:'postContainer'}, [
-                    m('div', {class: 'likeDiv'},
-                        m('a.link[href=#]', {class:'likeButton', onclick: function(e) { }},"like"),
-                        m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
-                    ),
-                    m('button', {class:'delButton', onclick: function(e) {
-                                Profile.deleteMessage(item.key.name)
-                            }},
-                        m('img', {src:"img/trashIcon.png", class:'trashImg'}),
-                    ),
-                    m('div', {class: 'bodyDiv'},
-                        m('label', {class: 'bodyPost'}, item.properties.body),
-                    ),
-                    m('img', {class: 'imagePost', 'src': item.properties.url}),
-                ])
+                if (vnode.attrs.profile.userIsProfile){
+                    return m('div', {class:'postContainer'}, [
+                        m('div', {class: 'likeDiv'},
+                            m('a.link[href=#]', {class:'likeButton', onclick: function(e) { }},"like"),
+                            m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
+                        ),
+                        m('button', {class:'delButton', onclick: function(e) {
+                                    Profile.deleteMessage(item.key.name)
+                                }},
+                            m('img', {src:"img/trashIcon.png", class:'trashImg'}),
+                        ),
+                        m('div', {class: 'bodyDiv'},
+                            m('label', {class: 'bodyPost'}, item.properties.body),
+                        ),
+                        m('img', {class: 'imagePost', 'src': item.properties.url}),
+                    ])
+                }else{
+                    return m('div', {class:'postContainer'}, [
+                        m('div', {class: 'likeDiv'},
+                            m('a.link[href=#]', {class:'likeButton', onclick: function(e) { }},"like"),
+                            m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
+                        ),
+                        m('div', {class: 'bodyDiv'},
+                            m('label', {class: 'bodyPost'}, item.properties.body),
+                        ),
+                        m('img', {class: 'imagePost', 'src': item.properties.url}),
+                    ])
+                }
+
             }),
             m("input", {
 

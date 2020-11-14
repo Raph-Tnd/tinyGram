@@ -9,6 +9,10 @@ function onInit(){
 		gapiRender("sign-in-login");
 		controller.loginButton = false;
 	}
+	if (controller.checkUserIsProfile){
+		Profile.loadProfile(controller.profileCheck);
+		controller.checkUserIsProfile = false;
+	}
 }
 
 function onError(){
