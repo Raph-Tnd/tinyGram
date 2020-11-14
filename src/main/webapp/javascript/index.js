@@ -5,10 +5,32 @@ function emailToUniqueName(email){
 function onInit(){
 	console.log("onInit");
 	controller.setGoogleAuth(gapi.auth2.getAuthInstance());
+	if (controller.loginButton){
+		gapiRender("sign-in-login");
+		controller.loginButton = false;
+	}
+}
 
+function onError(){
+	console.log("Google auth error");
+}
+
+function init(){
+	console.log("init");
+	gapi.load('auth2',function (){
+		console.log("initializating gapi");
+		gapi.auth2.init({
+			client_id: '1067622413243-kjhodo8vcomp32b0bpi84m47blnvkc1r.apps.googleusercontent.com'
+		})
+		.then(onInit,onError)
+	});
 }
 
 function gapiRender(id){
+	if (controller.authInstance ==""){
+		controller.loginButton = true;
+		return;
+	}
 	console.log("Rendering");
 	gapi.signin2.render(id,{
 		scope: 'profile email',
@@ -19,32 +41,13 @@ function gapiRender(id){
 		onsuccess: onInit,
 		onfailure: onError
 	})
+	return true;
 }
 
-function renderLogin(){
-	gapiRender("sign-in-login");
-}
 
-function onError(){
-	console.log("Google auth error");
-}
-
-function init(){
-	console.log("init");
-	gapi.load('auth2',function (){
-		gapi.auth2.init({
-			client_id: '1067622413243-kjhodo8vcomp32b0bpi84m47blnvkc1r.apps.googleusercontent.com'
-		})
-		.then(renderLogin,onError)
-	});
-}
 
 m.route(document.body, "/",{
-	"/": {
-		view:function(){
-			return m(HomePage)
-		}
-	},
+	"/": HomePage,
 	"/timeline": TimeLine,
 	"/profile/:user": PageProfile
 })
