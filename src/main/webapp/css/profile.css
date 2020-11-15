@@ -163,7 +163,29 @@
 	width: 100%;
 }
 
-.postButton {
+#postButton {
+	height: auto;
+	width: 10%;
+	
+	position: relative;
+	left: 45%;
+	margin-top: 10px;
+	/*margin-left: auto;
+	margin-right: auto;*/
+}
+#disconnectButton {
+	height: auto;
+	width: 12%;
+	
+	position: absolute;
+	right: 10px;
+	top: 10px;
+}
+
+
+
+.buttonSkin {
+	border: 0px;
 	background-color:#c5c5c5;
 	display:inline-block;
 	cursor:pointer;
@@ -172,20 +194,7 @@
 	font-size:17px;
 	padding:16px 31px;
 	text-decoration:none;
-	border: 0px;
-	width: auto;
-	position: relative;
-	width: 10%;
-	left: 45%;
-	height: auto;
-	margin-top: 10px;
-	/*margin-left: auto;
-	margin-right: auto;*/
 }
 .postButton:hover {
 	background-color: #EDEDED;
-}
-.postButton:active {
-	position:relative;
-	top:1px;
 }

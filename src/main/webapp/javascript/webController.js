@@ -77,10 +77,10 @@ var Profile = {
             return m('div', {class:'container'}, [
                 m("h1", {class: 'title'}, Profile.name),
                 m("img",{class: "profilePicture", "src":Profile.url}),
-                m("button",{class:"button", onclick: function(e) { Profile.loadList()}},"Msgs"),
-                m('button',{class:'btnDiv', onclick: function(){
-                        controller.disconnectUser();
-                    }},"Disconnect"),
+                //m("button",{class:"button", onclick: function(e) { Profile.loadList()}},"Msgs"),
+                m("button", {class:'buttonSkin', id:'disconnectButton', onclick: function() {
+                	controller.disconnectUser();
+                }},"Déconnexion"),
                 m("div", {class: 'tile'}, m('div',{class:'postForm'},m(PostForm))),
                 m("div",m(PostView,{profile: Profile}))
             ])
@@ -231,7 +231,7 @@ var PostForm = {
         placeholder:"Description",
         oninput: function(e) { PostForm.body = e.target.value }})),
         ]),
-        m('div',{class:'control'},m("button[type=submit]", {class:'postButton'},"Publier")),
+        m('div',{class:'control'},m("button[type=submit]", {class:'buttonSkin', id:'postButton'},"Publier")),
         ])
     }
 }
