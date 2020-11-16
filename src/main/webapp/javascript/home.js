@@ -1,5 +1,5 @@
 var HomePage = {
-    view: function (){
+    view: function (vnode){
         return m(Home)
     }
 }
@@ -18,7 +18,8 @@ var Home = {
                 m('div', {id : "sign-in-login"}),
                 m('div', {class:'line'}),
                 m('div', {class:'btnDiv'},[
-                        m(m.route.Link,{href: "/profile/"+emailToUniqueName(Profile.email), class:'btn'},"Profile"),
+                        //m(m.route.Link,{href: "/profile/"+emailToUniqueName(controller.currentUser.getBasicProfile().getEmail()), class:'btn'},"Profile"),
+                        m(m.route.Link,{href: "/profile/tenaudraphael", class:'btn'},"Profile"),
                 ])
             ),
             m('div', {class:'signature'},

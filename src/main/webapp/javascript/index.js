@@ -13,6 +13,10 @@ function onInit(){
 		Profile.loadProfile(controller.profileCheck);
 		controller.checkUserIsProfile = false;
 	}
+	if (controller.callFollow){
+		Profile.follow();
+		controller.callFollow=false;
+	}
 }
 
 function onError(){
