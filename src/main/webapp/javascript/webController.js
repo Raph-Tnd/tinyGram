@@ -159,6 +159,19 @@ var Profile = {
             console.log(e.message)
         })
     },
+    likePost: function(name) {
+        return m.request({
+            method: "POST",
+            url: "_ah/api/myApi/v1/likePost/"+name+'?access_token='+encodeURIComponent(Profile.ID)
+        })
+        .then(function(result) {
+            console.log("like:",result)
+            Profile.list.splice(Profile.list.indexOf(result),1)
+        })
+        .catch(function(e) {
+            console.log(e.message)
+        })
+    },
     createProfile: function(){
         return m.request({
             method: "POST",
@@ -243,7 +256,7 @@ var PostView = {
                 if (vnode.attrs.profile.userIsProfile){
                     return m('div', {class:'postContainer'}, [
                         m('div', {class: 'likeDiv'},
-                            m('a.link[href=#]', {class:'likeButton', onclick: function(e) { }},"like"),
+                            m('button', {class:'likeButton', onclick: function(e) { Profile.likePost(item.key.name) }},"like"),
                             m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
                         ),
                         m('button', {class:'delButton', onclick: function(e) {
@@ -259,7 +272,7 @@ var PostView = {
                 }else{
                     return m('div', {class:'postContainer'}, [
                         m('div', {class: 'likeDiv'},
-                            m('a.link[href=#]', {class:'likeButton', onclick: function(e) { }},"like"),
+                            m('button', {class:'likeButton', onclick: function(e) {  }},"like"),
                             m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
                         ),
                         m('div', {class: 'bodyDiv'},

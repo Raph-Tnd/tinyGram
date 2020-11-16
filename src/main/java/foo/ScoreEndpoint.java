@@ -10,6 +10,7 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.api.server.spi.auth.common.User;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -121,7 +122,8 @@ public class ScoreEndpoint {
 		e.setProperty("url", pm.url);
 		e.setProperty("body", pm.body);
 		e.setProperty("likec", 0);
-		e.setProperty("date", new Date());
+		e.setProperty("likel", new ArrayList<String>() );
+		e.setProperty("date", new Date() );
 ///		Solution pour pas projeter les listes
 //		Entity pi = new Entity("PostIndex", e.getKey());
 //		HashSet<String> rec=new HashSet<String>();
@@ -145,4 +147,28 @@ public class ScoreEndpoint {
 		ds.delete(toRemove);
 		return post;
 	}
+	@ApiMethod(name = "likePost", path = "likePost/{keyPost}",httpMethod = HttpMethod.POST)
+	public Entity likePost(User user, @Named("keyPost") String keyPost) throws UnauthorizedException, EntityNotFoundException {
+		if (user == null) {
+			throw new UnauthorizedException("Invalid credentials");
+		}
+
+		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+		Key userName = new Entity("Post",keyPost).getKey();
+		Entity post = ds.get(userName);
+
+
+		ArrayList<String> listLike = (ArrayList<String>)post.getProperty("likel");
+		int nbLike = (int)post.getProperty("likec");
+		if(listLike.contains( user.getEmail()) ){
+			listLike.remove( user.getEmail() );
+			nbLike-=1;
+		} else {
+			listLike.add( user.getEmail() );
+			nbLike+=1;
+		}
+
+		return post;
+	}
+
 }
