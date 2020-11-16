@@ -1,13 +1,18 @@
 package foo;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.google.appengine.api.datastore.Entity;
 
 
 public class Profile {
+	
     private String name;
     private String email;
     private String url;
     private String description;
+    private Set<String> followed;
     public final static String URL_IMAGE = "/img/hotface.png";
 
     public Profile(){ }
@@ -16,6 +21,7 @@ public class Profile {
         this.email = email;
         this.name = this.emailToUniqueName();
         this.url = URL_IMAGE;
+        this.followed = new HashSet<>();
     }
 
     public String emailToUniqueName(){
@@ -50,6 +56,20 @@ public class Profile {
 
     public String getDescription(){
         return description;
+    }
+    
+    public boolean addFriend(Profile f) {
+    	if(!f.getName().isEmpty()) {
+    		return this.followed.add(f.email);
+    	}
+    	return false;
+    }
+    
+    public boolean removeFriend(Profile f) {
+    	if(!f.getName().isEmpty()) {
+    		return this.followed.remove(f.getName());
+    	}
+    	return false;
     }
 
 }

@@ -13,6 +13,10 @@ function onInit(){
 		Profile.loadProfile(controller.profileCheck);
 		controller.callCheckUserIsProfile = false;
 	}
+	if (controller.callFollow){
+		Profile.follow();
+		controller.callFollow=false;
+	}
 }
 
 function onError(){
@@ -53,5 +57,6 @@ function gapiRender(id){
 m.route(document.body, "/",{
 	"/": HomePage,
 	"/timeline": TimeLine,
-	"/profile/:user": PageProfile
+	"/profile/:user": PageProfile,
+	"/profile/:user/friends": FriendsList
 })
