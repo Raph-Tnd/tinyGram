@@ -205,6 +205,11 @@ var Profile = {
 
 
 }
+
+var FriendsListView = {
+	
+}
+
 var PostForm = {
     url:"",
     body:"",
@@ -287,6 +292,12 @@ var PageProfile = {
     view: function(vnode){
         return m(Profile, {name: vnode.attrs.user})
     }
+}
+
+var FriendsList = {
+	view: function() {
+		return m(FriendsListView)
+	}
 }
 
 var TimeLine = {

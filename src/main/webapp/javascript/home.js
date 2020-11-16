@@ -10,10 +10,10 @@ var Home = {
     },
     view: function(){
         return m('div',[
-            m('div', {id:'left', class:'vertically-centered'},
+            m('div', {id:'left'},
                 m('img', {class:'frontImg', src:'./frontImg.jpg', alt:'TinyInsta front page image'}),
             ),
-            m('div', {id:'right', class:'vertically-centered'},
+            m('div', {id:'right'},
                 m('h1', "TinyGram"),
                 m('div', {id : "sign-in-login"}),
                 m('div', {class:'line'}),
