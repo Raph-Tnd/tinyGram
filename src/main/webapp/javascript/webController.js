@@ -7,8 +7,8 @@ function entityToProfile(entity){
 var controller = {
     authInstance : "",
     currentUser: "",
-    loginButton:false,
-    checkUserIsProfile:false,
+    callLoginButton:false,
+    callCheckUserIsProfile:false,
     profileCheck: "",
     setGoogleAuth: function(googleAuth){
         this.authInstance = googleAuth;
@@ -175,7 +175,7 @@ var Profile = {
     loadProfile: function(profileName){
         console.log(controller.authInstance);
         if(controller.authInstance == ""){
-            controller.checkUserIsProfile = true;
+            controller.callCheckUserIsProfile = true;
             controller.profileCheck = profileName;
             return;
         }

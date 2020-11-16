@@ -5,13 +5,13 @@ function emailToUniqueName(email){
 function onInit(){
 	console.log("onInit");
 	controller.setGoogleAuth(gapi.auth2.getAuthInstance());
-	if (controller.loginButton){
+	if (controller.callLoginButton){
 		gapiRender("sign-in-login");
-		controller.loginButton = false;
+		controller.callLoginButton = false;
 	}
-	if (controller.checkUserIsProfile){
+	if (controller.callCheckUserIsProfile){
 		Profile.loadProfile(controller.profileCheck);
-		controller.checkUserIsProfile = false;
+		controller.callCheckUserIsProfile = false;
 	}
 }
 
@@ -32,7 +32,7 @@ function init(){
 
 function gapiRender(id){
 	if (controller.authInstance ==""){
-		controller.loginButton = true;
+		controller.callLoginButton = true;
 		return;
 	}
 	console.log("Rendering");
