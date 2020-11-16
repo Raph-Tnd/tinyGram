@@ -1,5 +1,5 @@
 var HomePage = {
-    view: function (vnode){
+    view: function (){
         return m(Home)
     }
 }

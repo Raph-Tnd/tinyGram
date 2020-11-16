@@ -229,6 +229,9 @@ var Profile = {
         .then(function(result){
             console.log("Followed"+result.properties.name);
         })
+        .catch(function(e){
+            console.log(e.messages);
+        })
     }
 
 

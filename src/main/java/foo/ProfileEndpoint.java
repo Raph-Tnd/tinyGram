@@ -7,18 +7,10 @@ import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.config.Named;
 import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.datastore.*;
-import com.google.appengine.api.users.User;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.appengine.repackaged.com.google.protobuf.ListValue;
-import io.swagger.annotations.ApiParam;
-
-import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.google.appengine.api.users.User;
+import java.util.HashSet;
 
 
 @Api(name = "myApi",
@@ -49,8 +41,8 @@ public class ProfileEndpoint {
             throw new UnauthorizedException("Invalid credentials");
         }
         Entity e = new Profile(user.getEmail()).createEntity();
-        e.setProperty("followers", new ArrayList<String>());
-        e.setProperty("followed", new ArrayList<String>());
+        e.setProperty("followers", new HashSet<String>());
+        e.setProperty("followed", new HashSet<String>());
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         try{
             entityFound = ds.get(e.getKey());
@@ -66,50 +58,64 @@ public class ProfileEndpoint {
         }
     }
 
-
-    public void addProfileToFollower(Entity profile, Entity toFollow){
-        //profile follow toFollow
-        ArrayList<String> items = (ArrayList<String>)toFollow.getProperty("followers");
-        items.add((String)profile.getProperty("name"));
-        toFollow.setProperty("followers", items);
-        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        Transaction txn = ds.beginTransaction();
-        ds.put(toFollow);
-        txn.commit();
-    }
-
-    public void addProfileToFollowed(Entity profile, Entity following){
-        //profile is being followed by beingFollowed
-        ArrayList<String> items = (ArrayList<String>)profile.getProperty("followed");
-        items.add((String)following.getProperty("name"));
-        profile.setProperty("followed", items);
-        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        Transaction txn = ds.beginTransaction();
-        ds.put(profile);
-        txn.commit();
-    }
-
     @ApiMethod(name = "followProfile", path = "profile/{profileName}/follow", httpMethod = HttpMethod.POST)
-    public void followProfile(User user, @Named("profileName") String profileName) throws UnauthorizedException {
+    public Entity followProfile(User user, @Named("profileName") String profileName) throws UnauthorizedException {
         if (user == null){
             throw new UnauthorizedException("Invalid credentials");
         }
+
         String userName =user.getEmail().split("@")[0];
+
         if ( userName == profileName){
             throw new UnauthorizedException("Can't follow yourself");
         }
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        Query q = new Query("Profile")
+        Query q1 = new Query("Profile")
                 .setFilter(new FilterPredicate("name", FilterOperator.EQUAL, profileName));
-        PreparedQuery pq = ds.prepare(q);
-        Entity profileToFollow = pq.asSingleEntity();
+        PreparedQuery pq1 = ds.prepare(q1);
+        Entity profileToFollow = pq1.asSingleEntity();
 
-        q = new Query("Profile")
+        Query q2 = new Query("Profile")
                 .setFilter(new FilterPredicate("name", FilterOperator.EQUAL, userName));
-        pq = ds.prepare(q);
-        Entity profileFollowing = pq.asSingleEntity();
+        PreparedQuery pq2 = ds.prepare(q2);
+        Entity profileFollowing = pq2.asSingleEntity();
 
-        addProfileToFollowed(profileFollowing, profileToFollow);
-        addProfileToFollower(profileToFollow, profileFollowing);
+        //adding user to profile's followers
+        Object items1 = profileToFollow.getProperty("followers");
+        String toPut = (String)profileFollowing.getProperty("name");
+        HashSet<String> res1;
+        if(items1 == null){
+            res1 = new HashSet<String>();
+            res1.add(toPut);
+        }else{
+            res1 = (HashSet<String>)items1;
+            res1.add(toPut);
+        }
+        profileToFollow.setProperty("followers", res1);
+
+
+
+        //adding profile to user's followed
+        Object items2 = profileFollowing.getProperty("followed");
+        toPut = (String)profileToFollow.getProperty("name");
+        HashSet<String> res2;
+        if(items2 == null){
+            res2 = new HashSet<String>();
+            res2.add(toPut);
+        }else{
+            res2 = (HashSet<String>)items2;
+            res2.add(toPut);
+        }
+        profileFollowing.setProperty("followed", res2);
+
+
+        Transaction txn = ds.beginTransaction();
+        ds.put(profileToFollow);
+        ds.put(profileFollowing);
+        txn.commit();
+
+
+
+        return profileFollowing;
     }
 }
