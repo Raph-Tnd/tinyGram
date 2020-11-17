@@ -9,11 +9,9 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.api.server.spi.auth.common.User;
+import com.sun.org.apache.xpath.internal.objects.XObject;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Api(name = "myApi",
      version = "v1",
@@ -122,7 +120,7 @@ public class ScoreEndpoint {
 		e.setProperty("url", pm.url);
 		e.setProperty("body", pm.body);
 		e.setProperty("likec", 0);
-		e.setProperty("likel", new ArrayList<String>() );
+		e.setProperty("likel", new HashSet<String>() );
 		e.setProperty("date", new Date() );
 ///		Solution pour pas projeter les listes
 //		Entity pi = new Entity("PostIndex", e.getKey());
@@ -154,19 +152,39 @@ public class ScoreEndpoint {
 		}
 
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-		Key userName = new Entity("Post",keyPost).getKey();
-		Entity post = ds.get(userName);
+		Key keypost = new Entity("Post",keyPost).getKey();
+		Entity post = ds.get(keypost);
 
 
-		ArrayList<String> listLike = (ArrayList<String>)post.getProperty("likel");
-		int nbLike = (int)post.getProperty("likec");
-		if(listLike.contains( user.getEmail()) ){
-			listLike.remove( user.getEmail() );
-			nbLike-=1;
+		HashSet<String> listLike ;
+		Object precastList = post.getProperty("likel");
+		if ( precastList == null ) {
+			listLike = new HashSet<String>();
 		} else {
-			listLike.add( user.getEmail() );
-			nbLike+=1;
+			listLike = (HashSet<String>)precastList;
 		}
+
+		int nbLike = (int) post.getProperty("likec");
+
+		String userLiking = user.getEmail().split("@")[0];
+
+		if (listLike.contains(userLiking)) {
+			listLike.remove(userLiking);
+			nbLike -= 1;
+
+
+		} else {
+			listLike.add(userLiking);
+			nbLike += 1;
+
+		}
+
+
+		Transaction txn = ds.beginTransaction();
+		post.setProperty("likel", listLike);
+		post.setProperty("likec", nbLike);
+		ds.put(post);
+		txn.commit();
 
 		return post;
 	}
