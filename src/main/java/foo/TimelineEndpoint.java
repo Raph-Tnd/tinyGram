@@ -31,7 +31,7 @@ import java.util.Date;
 
 public class TimelineEndpoint {
 
-    /*@ApiMethod(name = "getTimeline", path = "profile/get/{profileName}",httpMethod = HttpMethod.GET)
+    @ApiMethod(name = "getTimeline", path = "profile/get/{profileName}",httpMethod = HttpMethod.GET)
     public CollectionResponse<Entity> getTimeline(User user, @Named("profileName") String profileName) throws EntityNotFoundException {
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         Key profileKey = new Entity("Profile", profileName).getKey();
@@ -42,6 +42,6 @@ public class TimelineEndpoint {
     }
 
 
-     */
+
 
 }
