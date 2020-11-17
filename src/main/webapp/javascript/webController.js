@@ -285,7 +285,7 @@ var PostView = {
 
 var PageProfile = {
     view: function(vnode){
-        return m(Profile, {name: vnode.attrs.user})
+        return [m(Profile, {name: vnode.attrs.user}),m(Header)]
     }
 }
 
@@ -295,5 +295,7 @@ var TimeLine = {
 
     }
 }
+
+
 
 
