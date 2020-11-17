@@ -136,7 +136,12 @@ var Profile = {
         })
         .then(function(result) {
             console.log("next:",result)
-            result.items.map(function(item){Profile.list.push(item)})
+            if (result.items != null){
+                result.items.map(function(item){Profile.list.push(item)})
+            }else{
+                console.log("No post to show");
+            }
+
             if ('nextPageToken' in result) {
                 Profile.nextToken= result.nextPageToken
             } else {
