@@ -13,12 +13,13 @@ var Home = {
             m('div', {id:'left', class:'vertically-centered'},
                 m('img', {class:'frontImg', src:'./img/frontImg.jpg', alt:'TinyInsta front page image'}),
             ),
-            m('div', {id:'right', class:'vertically-centered'},
+            m('div', {id:'right'},
                 m('h1', "TinyGram"),
                 m('div', {id : "sign-in-login"}),
                 m('div', {class:'line'}),
                 m('div', {class:'btnDiv'},[
-                        m(m.route.Link,{href: "/profile/"+emailToUniqueName(Profile.email), class:'btn'},"Profile"),
+                        //m(m.route.Link,{href: "/profile/"+emailToUniqueName(controller.currentUser.getBasicProfile().getEmail()), class:'btn'},"Profile"),
+                        m(m.route.Link,{href: "/profile/tenaudraphael", class:'btn'},"Profile"),
                 ])
             ),
             m('div', {class:'signature'},
