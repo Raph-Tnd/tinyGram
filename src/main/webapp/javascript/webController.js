@@ -344,7 +344,7 @@ var SearchBar = {
 }
 var PageProfile = {
     view: function(vnode){
-        return [m(SearchBar),m(Profile, {name: vnode.attrs.user})];
+        return [m(Header),m(Profile, {name: vnode.attrs.user})]
     }
 }
 
@@ -360,5 +360,7 @@ var TimeLine = {
 
     }
 }
+
+
 
 
