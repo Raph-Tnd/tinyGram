@@ -175,7 +175,7 @@ var Profile = {
                 }
             });
             Profile.list.splice(i,1,result);
-           // PostView.redraw();
+            //PostView.redraw();
         })
         .catch(function(e) {
             console.log(e.message)
@@ -262,13 +262,18 @@ var PostView = {
         console.log("redraw");
         m.redraw();
     },*/
-    /*isLiked: function(){
-        if(  item.properties.likel.includes(emailToUniqueName(controller.currentUser.getBasicProfile().getEmail()))  ) {
+
+    isLiked: function(temp){
+    console.log(temp);
+        if (temp.properties.likel != null) {
+            if( temp.properties.likel.includes(emailToUniqueName(controller.currentUser.getBasicProfile().getEmail())) ) {
+                buttonState = 'likedButton'
+            }
+        }else {
             buttonState = 'likeButton'
-        } else {
-            buttonState = 'likedButton' };
+        };
         return buttonState;
-    },*/
+    },
 
     view: function(vnode) {
 
@@ -280,7 +285,7 @@ var PostView = {
 
                     return m('div', {class:'postContainer'}, [
                         m('div', {class: 'likeDiv'},
-                            m('button', {class: 'likeButton', onclick: function(e) { Profile.likePost(item.key.name) }},"like"),
+                            m('button', {class: PostView.isLiked(item), onclick: function(e) { Profile.likePost(item.key.name); } },"like"),
                             m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
                         ),
                         m('button', {class:'delButton', onclick: function(e) {
@@ -296,7 +301,7 @@ var PostView = {
                 }else{
                     return m('div', {class:'postContainer'}, [
                         m('div', {class: 'likeDiv'},
-                            m('button', {class: 'likeButton', onclick: function(e) { Profile.likePost(item.key.name) }},"like"),
+                            m('button', {class: PostView.isLiked(item), onclick: function(e) { Profile.likePost(item.key.name) }},"like"),
                             m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
                         ),
                         m('div', {class: 'bodyDiv'},
@@ -326,6 +331,7 @@ var PageProfile = {
 }
 
 var TimeLine = {
+
     list: [],
     view: function(){
 
