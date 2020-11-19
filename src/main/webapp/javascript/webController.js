@@ -174,8 +174,8 @@ var Profile = {
                      i = Profile.list.indexOf(item);
                 }
             });
-            Profile.list.splice(i,result);
-            PostView.redraw();
+            Profile.list.splice(i,1,result);
+           // PostView.redraw();
         })
         .catch(function(e) {
             console.log(e.message)
@@ -258,23 +258,34 @@ var PostForm = {
     }
 }
 var PostView = {
-    redraw: function(){
+    /* redraw: function(){
         console.log("redraw");
         m.redraw();
-    },
+    },*/
+    /*isLiked: function(){
+        if(  item.properties.likel.includes(emailToUniqueName(controller.currentUser.getBasicProfile().getEmail()))  ) {
+            buttonState = 'likeButton'
+        } else {
+            buttonState = 'likedButton' };
+        return buttonState;
+    },*/
+
     view: function(vnode) {
+
         return m('div', [
             m('div',{class:'subtitle'}),
             vnode.attrs.profile.list.map(function(item) {
+
                 if (vnode.attrs.profile.userIsProfile){
+
                     return m('div', {class:'postContainer'}, [
                         m('div', {class: 'likeDiv'},
-                            m('button', {class:'likeButton', onclick: function(e) { Profile.likePost(item.key.name) }},"like"),
+                            m('button', {class: 'likeButton', onclick: function(e) { Profile.likePost(item.key.name) }},"like"),
                             m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
                         ),
                         m('button', {class:'delButton', onclick: function(e) {
-                                    Profile.deleteMessage(item.key.name)
-                                }},
+                                Profile.deleteMessage(item.key.name)
+                            }},
                             m('img', {src:"img/trashIcon.png", class:'trashImg'}),
                         ),
                         m('div', {class: 'bodyDiv'},
@@ -285,7 +296,7 @@ var PostView = {
                 }else{
                     return m('div', {class:'postContainer'}, [
                         m('div', {class: 'likeDiv'},
-                            m('button', {class:'likeButton', onclick: function(e) {Profile.likePost(item.key.name) }},"like"),
+                            m('button', {class: 'likeButton', onclick: function(e) { Profile.likePost(item.key.name) }},"like"),
                             m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
                         ),
                         m('div', {class: 'bodyDiv'},
@@ -297,7 +308,6 @@ var PostView = {
 
             }),
             m("input", {
-
                 type: "image",
                 src: "/img/nextArrow.png",
                 class: "nextButton",

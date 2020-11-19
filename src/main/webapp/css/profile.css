@@ -79,6 +79,15 @@
 	padding: 5px 10px;
 	border-radius: 25%;
 }
+.likedButton {
+	position: relative;
+	z-index: 1;
+	background-color: #0023FF;
+	color: white;
+	text-decoration: none;
+	padding: 5px 10px;
+	border-radius: 25%;
+}
 .likeButton:hover {
 	background-color: #EDEDED;
 }
