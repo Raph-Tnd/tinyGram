@@ -237,7 +237,8 @@ var Profile = {
         .catch(function(e){
             console.log(e.messages);
         })
-    }
+    },
+
 
 
 }
@@ -309,10 +310,8 @@ var PostView = {
                         m('img', {class: 'imagePost', 'src': item.properties.url}),
                     ])
                 }
-
             }),
             m("input", {
-
                 type: "image",
                 src: "/img/nextArrow.png",
                 class: "nextButton",
@@ -355,9 +354,74 @@ var FriendsList = {
 }
 
 var TimeLine = {
+    nextToken:"",
     list: [],
     view: function(){
+        return m('div', [
+            m('div',{class:'subtitle'}),
+            TimeLine.list.map(function(item) {
+                return m('div', {class:'postContainer'}, [
+                    m('div', {class: 'likeDiv'},
+                        m('a.link[href=#]', {class:'likeButton', onclick: function(e) { }},"like"),
+                        m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
+                    ),
+                    m('div', {class: 'bodyDiv'},
+                        m('label', {class: 'bodyPost'}, item.properties.body),
+                    ),
+                    m('img', {class: 'imagePost', 'src': item.properties.url}),
+                ])
+            }),
+            m("input", {
+                type: "image",
+                src: "/img/nextArrow.png",
+                class: "nextButton",
+                onclick: function(e) {
+                    TimeLine.getTimeline()
+                },
+            }),
+        ])
+    },
+    loadTimeline: function() {
+        return m.request({
+            method: "GET",
+            url: "_ah/api/myApi/v1/timeline/"+'?access_token=' + encodeURIComponent(controller.userID)
+        })
+            .then(function(result) {
+                console.log("load_list:",result)
+                TimeLine.list=result.items
+                if ('nextPageToken' in result) {
+                    TimeLine.nextToken= result.nextPageToken
+                } else {
+                    TimeLine.nextToken=""
+                }})
+            .catch(function(e){
+                console.log(e)
+            })
+    },
+    getTimeline: function(){
+        console.log("Call getTimeline");
+        return m.request({
+            method: "GET",
+            url: "_ah/api/myApi/v1/timeline",
+            params: {
+                'next':TimeLine.nextToken,
+                'access_token': encodeURIComponent(controller.userID)
+            }
+        })
+        .then(function(result){
+            console.log("next:",result)
+            if (result.items != null){
+                result.items.map(function(item){TimeLine.list.push(item)})
+            }else{
+                console.log("No post to show");
+            }
 
+            if ('nextPageToken' in result) {
+                TimeLine.nextToken= result.nextPageToken
+            } else {
+                TimeLine.nextToken=""
+            }
+        })
     }
 }
 
