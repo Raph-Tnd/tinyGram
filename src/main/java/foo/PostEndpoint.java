@@ -25,7 +25,7 @@ import java.util.Random;
 		   packagePath = "")
      )
 
-public class ScoreEndpoint {
+public class PostEndpoint {
 
 
 
