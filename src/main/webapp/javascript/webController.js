@@ -153,6 +153,7 @@ var Profile = {
         })
         .then(function(result) {
             console.log("delete:",result)
+            //deleting from view
             Profile.list.splice(Profile.list.indexOf(result),1)
         })
         .catch(function(e) {
@@ -165,8 +166,16 @@ var Profile = {
             url: "_ah/api/myApi/v1/likePost/"+name+'?access_token='+encodeURIComponent(Profile.ID)
         })
         .then(function(result) {
-            console.log("like:",result)
-            Profile.list.splice(Profile.list.indexOf(result),1)
+            console.log("like:",result);
+            //updating like from view
+            let i = -1;
+            Profile.list.map(function(item){
+                if(item.properties.date == result.properties.date){
+                     i = Profile.list.indexOf(item);
+                }
+            });
+            Profile.list.splice(i,result);
+            PostView.redraw();
         })
         .catch(function(e) {
             console.log(e.message)
@@ -249,6 +258,10 @@ var PostForm = {
     }
 }
 var PostView = {
+    redraw: function(){
+        console.log("redraw");
+        m.redraw();
+    },
     view: function(vnode) {
         return m('div', [
             m('div',{class:'subtitle'}),
@@ -272,7 +285,7 @@ var PostView = {
                 }else{
                     return m('div', {class:'postContainer'}, [
                         m('div', {class: 'likeDiv'},
-                            m('button', {class:'likeButton', onclick: function(e) {  }},"like"),
+                            m('button', {class:'likeButton', onclick: function(e) {Profile.likePost(item.key.name) }},"like"),
                             m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
                         ),
                         m('div', {class: 'bodyDiv'},

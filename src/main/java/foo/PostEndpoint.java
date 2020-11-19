@@ -157,27 +157,24 @@ public class PostEndpoint {
 		Entity post = ds.get(keypost);
 
 
-		HashSet<String> listLike ;
+		Collection<String> listLike ;
 		Object precastList = post.getProperty("likel");
 		if ( precastList == null ) {
 			listLike = new HashSet<String>();
 		} else {
-			listLike = (HashSet<String>)precastList;
+			listLike = (List<String>)precastList;
 		}
 
-		int nbLike = (int) post.getProperty("likec");
+		long nbLike = (long) post.getProperty("likec");
 
 		String userLiking = user.getEmail().split("@")[0];
 
 		if (listLike.contains(userLiking)) {
 			listLike.remove(userLiking);
 			nbLike -= 1;
-
-
 		} else {
 			listLike.add(userLiking);
 			nbLike += 1;
-
 		}
 
 
