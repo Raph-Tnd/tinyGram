@@ -232,7 +232,7 @@ var Profile = {
             url: "_ah/api/myApi/v1/profile/"+Profile.name+"/follow"+'?access_token='+encodeURIComponent(controller.userID),
         })
         .then(function(result){
-            console.log("Followed"+result.properties.name);
+            console.log("Followed "+result.properties.name);
         })
         .catch(function(e){
             console.log(e.messages);

@@ -101,13 +101,6 @@ public class PostEndpoint {
 		return CollectionResponse.<Entity>builder().setItems(results).setNextPageToken(cursorString).build();
 	}
 
-	public Key getUserKey(User user){
-		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-		Query q = new Query("_ah_SESSION");
-				//.setFilter(new FilterPredicate(""));
-		return null;
-	}
-
 	@ApiMethod(name = "postMsg", path="postMsg", httpMethod = HttpMethod.POST)
 	public Entity postMsg(User user, PostMessage pm) throws UnauthorizedException {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
