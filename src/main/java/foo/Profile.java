@@ -8,6 +8,11 @@ public class Profile {
     private String email;
     private String url;
     private String description;
+<<<<<<< Updated upstream
+=======
+    private Set<String> follows;
+    private Set<String> followers;
+>>>>>>> Stashed changes
     public final static String URL_IMAGE = "/img/hotface.png";
 
     public Profile(){ }
@@ -16,6 +21,11 @@ public class Profile {
         this.email = email;
         this.name = this.emailToUniqueName();
         this.url = URL_IMAGE;
+<<<<<<< Updated upstream
+=======
+        this.follows = new HashSet<>();
+        this.followers = new HashSet<>();
+>>>>>>> Stashed changes
     }
 
     public String emailToUniqueName(){
@@ -33,6 +43,8 @@ public class Profile {
         e.setProperty("email", this.email);
         e.setProperty("url",this.url);
         e.setProperty("description",this.description);
+        e.setProperty("follows",this.follows);
+        e.setProperty("followers", this.followers);
         return e;
     }
 
@@ -51,5 +63,15 @@ public class Profile {
     public String getDescription(){
         return description;
     }
+<<<<<<< Updated upstream
+=======
 
+    public Set<String> getFollows(){
+        return follows;
+    }
+>>>>>>> Stashed changes
+
+    public Set<String> getFollowers(){
+        return followers;
+    }
 }
