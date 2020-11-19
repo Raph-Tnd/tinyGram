@@ -88,8 +88,8 @@ var Profile = {
             Profile.loadProfile(vnode.attrs.name);
         }
         if(Profile.userIsProfile){
-            return m('div', {class:'container'}, [
-                m("h1", {class: 'title'}, Profile.name),
+            return m('div', {class:'profileContainer'}, [
+                m("h1", {class: 'profileName'}, Profile.name),
                 m("img",{class: "profilePicture", "src":Profile.url}),
                 //m("button",{class:"button", onclick: function(e) { Profile.loadList()}},"Msgs"),
                 m("button", {class:'buttonSkin', id:'disconnectButton', onclick: function(e) {
@@ -99,10 +99,10 @@ var Profile = {
                 m("div",m(PostView,{profile: Profile}))
             ])
         }else{
-            return m('div', {class:'container'}, [
-                m("h1", {class: 'title'}, Profile.name),
+            return m('div', {class:'profileContainer'}, [
+                m("h1", {class: 'profileName'}, Profile.name),
                 m("img",{class: "profilePicture", "src":Profile.url}),
-                m("button",{class:"button", onclick: function(e) { Profile.follow()}},"Follow"),
+                m("button",{class:"buttonSkin", id: 'profileFollow', onclick: function(e) { Profile.follow()}},"Follow"),
                 m("div",m(PostView,{profile: Profile}))
             ])
         }
@@ -258,7 +258,7 @@ var PostForm = {
             }
         },
         [
-        m('div', {class:'field'},[
+        m('div', {class:'formContainer'},[
         m("label", {class:'label'},"URL de l'image"),
         m('div',{class:'control'}, m("input[type=text]", {
         class:'input',
@@ -314,7 +314,7 @@ var PostView = {
             m("input", {
                 type: "image",
                 src: "/img/nextArrow.png",
-                class: "nextButton",
+                class: "postNextButton",
                 onclick: function(e) {
                     vnode.attrs.profile.next()
                 },
@@ -326,18 +326,16 @@ var PostView = {
 var SearchBar = {
     body:"",
     view:function(){
-        return m('form', {onsubmit: function(e){
+        return m('form', {class:'searchBarContainer', onsubmit: function(e){
             controller.searchProfile(SearchBar.body);
         }},
         [
-        m('div',{class:'field'},[
-        m("label", {class: 'label'},"Rechercher profile: "),
-        m('div',{class:'control'},m("input[type=textarea]", {
-            class:'input',
-            placeholder:"nom profile",
-            oninput: function(e) { SearchBar.body = e.target.value }})),
+        m('div',{class:'searchBarForm'},[
+        m("input[type=textarea]", {class:'textInputSkin', id: 'searchBarTextInput',
+            placeholder:"Recherche un profile",
+            oninput: function(e) { SearchBar.body = e.target.value }}),
         ]),
-        m('div',{class:'control'},m("button[type=submit]", {class:'buttonSkin', id:'postButton'},"Search")),
+        m("button[type=submit]", {class:'buttonSkin', id:'searchBarPostButton'},"Go !"),
     ])
     }
 }
