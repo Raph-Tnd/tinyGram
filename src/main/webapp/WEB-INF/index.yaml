@@ -6,3 +6,10 @@ indexes:
       direction: asc
     - name: date
       direction: desc
+
+- kind: Profile
+  properties:
+    - name: name
+      direction: asc
+    - name: email
+      direction: asc

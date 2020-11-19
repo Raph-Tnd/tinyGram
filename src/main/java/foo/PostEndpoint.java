@@ -9,7 +9,6 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.api.server.spi.auth.common.User;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -101,13 +100,6 @@ public class PostEndpoint {
 		return CollectionResponse.<Entity>builder().setItems(results).setNextPageToken(cursorString).build();
 	}
 
-	public Key getUserKey(User user){
-		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-		Query q = new Query("_ah_SESSION");
-				//.setFilter(new FilterPredicate(""));
-		return null;
-	}
-
 	@ApiMethod(name = "postMsg", path="postMsg", httpMethod = HttpMethod.POST)
 	public Entity postMsg(User user, PostMessage pm) throws UnauthorizedException {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -121,7 +113,8 @@ public class PostEndpoint {
 		e.setProperty("url", pm.url);
 		e.setProperty("body", pm.body);
 		e.setProperty("likec", 0);
-		e.setProperty("date", new Date());
+		e.setProperty("likel", new HashSet<String>() );
+		e.setProperty("date", new Date() );
 ///		Solution pour pas projeter les listes
 //		Entity pi = new Entity("PostIndex", e.getKey());
 //		HashSet<String> rec=new HashSet<String>();
@@ -145,5 +138,44 @@ public class PostEndpoint {
 		ds.delete(toRemove);
 		return post;
 	}
+  
+	@ApiMethod(name = "likePost", path = "likePost/{keyPost}",httpMethod = HttpMethod.POST)
+	public Entity likePost(User user, @Named("keyPost") String keyPost) throws UnauthorizedException, EntityNotFoundException {
+		if (user == null) {
+			throw new UnauthorizedException("Invalid credentials");
+		}
 
+		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+		Key keypost = new Entity("Post",keyPost).getKey();
+		Entity post = ds.get(keypost);
+
+
+		Collection<String> listLike ;
+		Object precastList = post.getProperty("likel");
+		if ( precastList == null ) {
+			listLike = new HashSet<String>();
+		} else {
+			listLike = (List<String>)precastList;
+		}
+
+		long nbLike = (long) post.getProperty("likec");
+
+		String userLiking = user.getEmail().split("@")[0];
+
+		if (listLike.contains(userLiking)) {
+			listLike.remove(userLiking);
+			nbLike -= 1;
+		} else {
+			listLike.add(userLiking);
+			nbLike += 1;
+		}
+
+		Transaction txn = ds.beginTransaction();
+		post.setProperty("likel", listLike);
+		post.setProperty("likec", nbLike);
+		ds.put(post);
+		txn.commit();
+
+		return post;
+	}
 }

@@ -169,7 +169,29 @@ var Profile = {
         })
         .then(function(result) {
             console.log("delete:",result)
+            //deleting from view
             Profile.list.splice(Profile.list.indexOf(result),1)
+        })
+        .catch(function(e) {
+            console.log(e.message)
+        })
+    },
+    likePost: function(name) {
+        return m.request({
+            method: "POST",
+            url: "_ah/api/myApi/v1/likePost/"+name+'?access_token='+encodeURIComponent(Profile.ID)
+        })
+        .then(function(result) {
+            console.log("like:",result);
+            //updating like from view
+            let i = -1;
+            Profile.list.map(function(item){
+                if(item.properties.date == result.properties.date){
+                     i = Profile.list.indexOf(item);
+                }
+            });
+            Profile.list.splice(i,1,result);
+           // PostView.redraw();
         })
         .catch(function(e) {
             console.log(e.message)
@@ -229,7 +251,7 @@ var Profile = {
             url: "_ah/api/myApi/v1/profile/"+Profile.name+"/follow"+'?access_token='+encodeURIComponent(controller.userID),
         })
         .then(function(result){
-            console.log("Followed"+result.properties.name);
+            console.log("Followed "+result.properties.name);
         })
         .catch(function(e){
             console.log(e.messages);
@@ -268,14 +290,29 @@ var PostForm = {
     }
 }
 var PostView = {
+    /* redraw: function(){
+        console.log("redraw");
+        m.redraw();
+    },*/
+    /*isLiked: function(){
+        if(  item.properties.likel.includes(emailToUniqueName(controller.currentUser.getBasicProfile().getEmail()))  ) {
+            buttonState = 'likeButton'
+        } else {
+            buttonState = 'likedButton' };
+        return buttonState;
+    },*/
+
     view: function(vnode) {
+
         return m('div', [
             m('div',{class:'subtitle'}),
             vnode.attrs.profile.list.map(function(item) {
+
                 if (vnode.attrs.profile.userIsProfile){
+
                     return m('div', {class:'postContainer'}, [
                         m('div', {class: 'likeDiv'},
-                            m('a.link[href=#]', {class:'likeButton', onclick: function(e) { }},"like"),
+                            m('button', {class: 'likeButton', onclick: function(e) { Profile.likePost(item.key.name) }},"like"),
                             m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
                         ),
                         m('button', {class:'postDeleteButton', onclick: function(e) {
@@ -291,7 +328,7 @@ var PostView = {
                 }else{
                     return m('div', {class:'postContainer'}, [
                         m('div', {class: 'likeDiv'},
-                            m('a.link[href=#]', {class:'likeButton', onclick: function(e) { }},"like"),
+                            m('button', {class: 'likeButton', onclick: function(e) { Profile.likePost(item.key.name) }},"like"),
                             m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
                         ),
                         m('div', {class: 'bodyDiv'},
