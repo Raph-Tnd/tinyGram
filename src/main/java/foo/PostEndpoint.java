@@ -9,9 +9,9 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.api.server.spi.auth.common.User;
-import com.sun.org.apache.xpath.internal.objects.XObject;
-
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
 @Api(name = "myApi",
      version = "v1",
@@ -100,13 +100,6 @@ public class PostEndpoint {
 		return CollectionResponse.<Entity>builder().setItems(results).setNextPageToken(cursorString).build();
 	}
 
-	public Key getUserKey(User user){
-		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-		Query q = new Query("_ah_SESSION");
-				//.setFilter(new FilterPredicate(""));
-		return null;
-	}
-
 	@ApiMethod(name = "postMsg", path="postMsg", httpMethod = HttpMethod.POST)
 	public Entity postMsg(User user, PostMessage pm) throws UnauthorizedException {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -145,7 +138,7 @@ public class PostEndpoint {
 		ds.delete(toRemove);
 		return post;
 	}
-
+  
 	@ApiMethod(name = "likePost", path = "likePost/{keyPost}",httpMethod = HttpMethod.POST)
 	public Entity likePost(User user, @Named("keyPost") String keyPost) throws UnauthorizedException, EntityNotFoundException {
 		if (user == null) {
@@ -177,7 +170,6 @@ public class PostEndpoint {
 			nbLike += 1;
 		}
 
-
 		Transaction txn = ds.beginTransaction();
 		post.setProperty("likel", listLike);
 		post.setProperty("likec", nbLike);
@@ -186,5 +178,4 @@ public class PostEndpoint {
 
 		return post;
 	}
-
 }
