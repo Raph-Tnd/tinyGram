@@ -1,10 +1,75 @@
-#mainTitle {
+/*---------Profile---------*/
+.profileContainer {
+    position: absolute;
+	width: 50%;
+	left: 50%;
+	top: 100px;
+	transform: translate(-50%, 0%);
+}
+.profileName {
+	position: absolute;
+	left: 25%;
+	top: 50px;
+	font-size: 20px;
+}
+.profilePicture {
+	position: absolute;
+	max-width: 150px;
+	height: auto;
+	left: 10px;
+}
+#profileFollow {
+	position: absolute;
+	margin-top: 40px;
+	left: 70px;
+}
+
+
+
+/*---------Form---------*/
+.formContainer {
+	border: 1px solid balck;
+	position: relative;
+	left: 75%;
+	top: 10px;
+	margin-bottom: 60px;
+	width: 50%;
+}
+.formInput {
+	position: relative;
+	width: 100%;
+ 	text-align: left;
+}
+
+
+
+
+/*---------Post---------*/
+.postContainer {
+	position: relative;
+}
+.postNextButton {
+	position: relative;
+	max-width: 50px;
+	left: 50%;
+	transform: translate(-50%, 0%);
+}
+.postDeleteButton {
+}
+.postDeleteButtonImage {
+	width: 50px;
+	height: auto;
+}
+
+
+
+
+/*#mainTitle {
 	margin: 0;
 	font-family:'Billabong';
 	font-weight: normal;
 	font-size: 55px;
 	position: absolute;
-	text-align: center;
 	width: 100%;
 	height: 100px;
 	background-color: white;
@@ -64,7 +129,7 @@
 	border-radius: 5%;
 	left: 5%;
 	position: relative;
-	/*border: 1px solid black;*/
+	border: 1px solid black;
 }
 .postContainer {
 	width: 100%;
@@ -104,14 +169,14 @@
 .bodyDiv {
 	position: relative;
 	left: 45%;
-	/*border: 1px solid black;*/
+	border: 1px solid black;
 	width: 20%;
 	height: auto;
 	margin-top: 10px;
 	margin-left: 10px;
 }
 .likeDiv {
-	/*border: 1px solid black;*/
+	border: 1px solid black;
 	left: 15%;
 	width: 50%;
 	position: relative;
@@ -139,12 +204,12 @@
 	left: 45%;,
 }
 .fieldBody {
-	/*border: 1px solid black;*/
+	border: 1px solid black;
 	width: 100%;
 }
 
 .label {
-	/*border: 1px solid black;*/
+	border: 1px solid black;
 	position: relative;
 	display: inline-block;
 	text-align: center;
@@ -156,7 +221,7 @@
 	width: 90%;
 	height: 2em;
 	position: relative;
-	/*border: 1px solid black;*/
+	border: 1px solid black;
 	display: block;
 	left: 5%;
 }
@@ -179,8 +244,8 @@
 	position: relative;
 	left: 45%;
 	margin-top: 10px;
-	/*margin-left: auto;
-	margin-right: auto;*/
+	margin-left: auto;
+	margin-right: auto;
 }
 
 #disconnectButton {
@@ -208,3 +273,4 @@
 .postButton:hover {
 	background-color: #EDEDED;
 }
+*/

@@ -88,21 +88,18 @@ var Profile = {
             Profile.loadProfile(vnode.attrs.name);
         }
         if(Profile.userIsProfile){
-            return m('div', {class:'container'}, [
-                m("h1", {class: 'title'}, Profile.name),
+            return m('div', {class:'profileContainer'}, [
+                m("h1", {class: 'profileName'}, Profile.name),
                 m("img",{class: "profilePicture", "src":Profile.url}),
                 //m("button",{class:"button", onclick: function(e) { Profile.loadList()}},"Msgs"),
-                m("button", {class:'buttonSkin', id:'disconnectButton', onclick: function(e) {
-                	controller.disconnectUser();
-                }},"Déconnexion"),
                 m("div", {class: 'tile'}, m('div',{class:'postForm'},m(PostForm))),
                 m("div",m(PostView,{profile: Profile}))
             ])
         }else{
-            return m('div', {class:'container'}, [
-                m("h1", {class: 'title'}, Profile.name),
+            return m('div', {class:'profileContainer'}, [
+                m("h1", {class: 'profileName'}, Profile.name),
                 m("img",{class: "profilePicture", "src":Profile.url}),
-                m("button",{class:"button", onclick: function(e) { Profile.follow()}},"Follow"),
+                m("button",{class:"buttonSkin", id: 'profileFollow', onclick: function(e) { Profile.follow()}},"Follow"),
                 m("div",m(PostView,{profile: Profile}))
             ])
         }
@@ -260,13 +257,6 @@ var Profile = {
             console.log(e.messages);
         })
     },
-
-
-
-}
-
-var FriendsListView = {
-	
 }
 
 var PostForm = {
@@ -274,26 +264,26 @@ var PostForm = {
     body:"",
     view: function() {
         return m("form", {
+        	class:'formContainer',
             onsubmit: function(e) {
                 if (this.url =="") {return ;}
                 Profile.postMessage(PostForm.body,PostForm.url)
             }
         },
         [
-        m('div', {class:'field'},[
-        m("label", {class:'label'},"URL de l'image"),
+        m('div',[
         m('div',{class:'control'}, m("input[type=text]", {
-        class:'input',
-        placeholder:"URL",
-        oninput: function(e) {PostForm.url = e.target.value}})),
-        //		          m("img",{"src":this.url}),
+        	class: 'textInputSkin',
+        	id:'formInput',
+        	placeholder:"URL",
+        	oninput: function(e) {PostForm.url = e.target.value}})),
         ]),
         m('div',{class:'field'},[
-        m("label", {class: 'label'},"Description"),
         m('div',{class:'control'},m("input[type=textarea]", {
-        class:'input',
-        placeholder:"Description",
-        oninput: function(e) { PostForm.body = e.target.value }})),
+        	class: 'textInputSkin',
+        	id:'formInput',
+        	placeholder:"Description",
+        	oninput: function(e) { PostForm.body = e.target.value }})),
         ]),
         m('div',{class:'control'},m("button[type=submit]", {class:'buttonSkin', id:'postButton'},"Publier")),
         ])
@@ -325,10 +315,10 @@ var PostView = {
                             m('button', {class: 'likeButton', onclick: function(e) { Profile.likePost(item.key.name) }},"like"),
                             m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
                         ),
-                        m('button', {class:'delButton', onclick: function(e) {
-                                Profile.deleteMessage(item.key.name)
-                            }},
-                            m('img', {src:"img/trashIcon.png", class:'trashImg'}),
+                        m('button', {class:'postDeleteButton', onclick: function(e) {
+                                    Profile.deleteMessage(item.key.name)
+                                }},
+                            m('img', {class:'postDeleteButtonImage', src:"img/trashIcon.png"}),
                         ),
                         m('div', {class: 'bodyDiv'},
                             m('label', {class: 'bodyPost'}, item.properties.body),
@@ -351,7 +341,7 @@ var PostView = {
             m("input", {
                 type: "image",
                 src: "/img/nextArrow.png",
-                class: "nextButton",
+                class: "postNextButton",
                 onclick: function(e) {
                     vnode.attrs.profile.next()
                 },
@@ -363,18 +353,16 @@ var PostView = {
 var SearchBar = {
     body:"",
     view:function(){
-        return m('form', {onsubmit: function(e){
+        return m('form', {class:'searchBarContainer', onsubmit: function(e){
             controller.searchProfile(SearchBar.body);
         }},
         [
-        m('div',{class:'field'},[
-        m("label", {class: 'label'},"Rechercher profile: "),
-        m('div',{class:'control'},m("input[type=textarea]", {
-            class:'input',
-            placeholder:"nom profile",
-            oninput: function(e) { SearchBar.body = e.target.value }})),
+        m('div',{class:'searchBarForm'},[
+        m("input[type=textarea]", {class:'textInputSkin', id: 'searchBarTextInput',
+            placeholder:"Recherche un profile",
+            oninput: function(e) { SearchBar.body = e.target.value }}),
         ]),
-        m('div',{class:'control'},m("button[type=submit]", {class:'buttonSkin', id:'postButton'},"Search")),
+        m("button[type=submit]", {class:'buttonSkin', id:'searchBarPostButton'},"Go !"),
     ])
     }
 }
