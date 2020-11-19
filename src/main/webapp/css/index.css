@@ -51,6 +51,7 @@
 	width: 30%;
 	border: 1px solid #c5c5c5;
 	top: 5px;
+ 	text-align: center;
 }
 #searchBarButton {
 	position: absolute;

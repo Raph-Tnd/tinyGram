@@ -1,22 +1,20 @@
 /*---------Profile---------*/
 .profileContainer {
-    position: relative;
-    float: center;
-    width: 90%;
-    height: 100px;
-	left:5%;
-	top: 60px;
-	background-color: white;
+    position: absolute;
+	width: 50%;
+	left: 50%;
+	top: 100px;
+	transform: translate(-50%, 0%);
 }
 .profileName {
 	position: absolute;
-	text-align: left;
+	left: 25%;
+	top: 50px;
 	font-size: 20px;
-	left: 70px;
 }
 .profilePicture {
-	position: relative;
-	max-width: 50px;
+	position: absolute;
+	max-width: 150px;
 	height: auto;
 	left: 10px;
 }
@@ -28,12 +26,27 @@
 
 
 
+/*---------Form---------*/
+.formContainer {
+	border: 1px solid balck;
+	position: relative;
+	left: 75%;
+	top: 10px;
+	margin-bottom: 60px;
+	width: 50%;
+}
+.formInput {
+	position: relative;
+	width: 100%;
+ 	text-align: left;
+}
+
+
+
 
 /*---------Post---------*/
 .postContainer {
 	position: relative;
-	width: 100%;
-	margin-top: 50px;
 }
 .postNextButton {
 	position: relative;
@@ -41,8 +54,12 @@
 	left: 50%;
 	transform: translate(-50%, 0%);
 }
-
-
+.postDeleteButton {
+}
+.postDeleteButtonImage {
+	width: 50px;
+	height: auto;
+}
 
 
 
