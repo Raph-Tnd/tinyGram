@@ -24,7 +24,7 @@ import java.util.*;
 		   packagePath = "")
      )
 
-public class ScoreEndpoint {
+public class PostEndpoint {
 
 
 
@@ -145,6 +145,7 @@ public class ScoreEndpoint {
 		ds.delete(toRemove);
 		return post;
 	}
+
 	@ApiMethod(name = "likePost", path = "likePost/{keyPost}",httpMethod = HttpMethod.POST)
 	public Entity likePost(User user, @Named("keyPost") String keyPost) throws UnauthorizedException, EntityNotFoundException {
 		if (user == null) {
