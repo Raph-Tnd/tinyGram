@@ -7,8 +7,8 @@ import com.google.appengine.api.datastore.Entity;
 
 
 public class Profile {
-	
-    private String name;
+
+    private String accountName;
     private String email;
     private String url;
     private String description;
@@ -20,7 +20,7 @@ public class Profile {
 
     public Profile(String email){
         this.email = email;
-        this.name = this.emailToUniqueName();
+        this.accountName = this.emailToUniqueName();
         this.url = URL_IMAGE;
         this.follows = new HashSet<>();
         this.followers = new HashSet<>();
@@ -37,7 +37,7 @@ public class Profile {
 
     public Entity createEntity(){
         Entity e = new Entity("Profile",this.emailToUniqueName());
-        e.setProperty("name" , this.name);
+        e.setProperty("accountName" , this.accountName);
         e.setProperty("email", this.email);
         e.setProperty("url",this.url);
         e.setProperty("description",this.description);
@@ -46,8 +46,8 @@ public class Profile {
         return e;
     }
 
-    public String getName(){
-        return name;
+    public String getAccountName(){
+        return accountName;
     }
 
     public String getEmail(){

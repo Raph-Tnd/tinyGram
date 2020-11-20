@@ -1,6 +1,6 @@
 function entityToProfile(entity){
     Profile.email = entity.properties.email;
-    Profile.name = entity.properties.name;
+    Profile.name = entity.properties.accountName;
     Profile.url = entity.properties.url;
 }
 
@@ -19,7 +19,6 @@ var controller = {
         //if user already signed in, redirect automatically
         if (controller.authInstance.isSignedIn.get()){
             controller.loadGoogleUser();
-            //controller.redirectTo("/profile/"+Profile.name);
         }
     },
     loadGoogleUser: function(){
@@ -112,6 +111,7 @@ var Profile = {
         })
     },
     next: function() {
+        console.log(Profile.name);
         return m.request({
             method: "GET",
             url: "_ah/api/myApi/v1/profile/"+Profile.name+"/post",
@@ -167,7 +167,7 @@ var Profile = {
     likePost: function(name) {
         return m.request({
             method: "POST",
-            url: "_ah/api/myApi/v1/likePost/"+name+'?access_token='+encodeURIComponent(Profile.ID)
+            url: "_ah/api/myApi/v1/likePost/"+name+'?access_token='+encodeURIComponent(controller.userID)
         })
         .then(function(result) {
             console.log("like:",result);

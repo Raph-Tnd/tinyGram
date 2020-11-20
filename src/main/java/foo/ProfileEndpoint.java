@@ -77,23 +77,12 @@ public class ProfileEndpoint {
         }
 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        /*Query q1 = new Query("Profile")
-                .setFilter(new FilterPredicate("name", FilterOperator.EQUAL, profileName));
-        PreparedQuery pq1 = ds.prepare(q1);
-        Entity profileToFollow = pq1.asSingleEntity();
-
-        Query q2 = new Query("Profile")
-                .setFilter(new FilterPredicate("name", FilterOperator.EQUAL, userName));
-        PreparedQuery pq2 = ds.prepare(q2);
-        Entity profileFollowing = pq2.asSingleEntity();
-
-         */
         Entity profileToFollow = ds.get(new Entity("Profile",profileName).getKey());
         Entity profileFollowing = ds.get(new Entity("Profile", userName).getKey());
 
         //adding user to profile's followers
         Object items1 = profileToFollow.getProperty("followers");
-        String toPut = (String)profileFollowing.getProperty("name");
+        String toPut = (String)profileFollowing.getProperty("accountName");
         Collection<String> res1;
         if(items1 == null){
             res1 = new HashSet<String>();
@@ -111,7 +100,7 @@ public class ProfileEndpoint {
 
         //adding profile to user's follows
         Object items2 = profileFollowing.getProperty("follows");
-        toPut = (String)profileToFollow.getProperty("name");
+        toPut = (String)profileToFollow.getProperty("accountName");
         Collection<String> res2;
         if(items2 == null){
             res2 = new HashSet<String>();
