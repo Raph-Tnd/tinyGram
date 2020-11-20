@@ -592,6 +592,7 @@ var ProfilePage = {
     }
 }
 
+
 var HomePage = {
     view: function (){
         return [m(Header),m(Home)]
