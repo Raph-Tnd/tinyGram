@@ -1,12 +1,4 @@
 indexes:
-<<<<<<< Updated upstream
-- kind: Friend 
-  properties: 
-    - name: friends 
-    - name: age 
-    
-=======
-
 - kind: Post
   properties:
     - name: owner
@@ -20,4 +12,3 @@ indexes:
       direction: asc
     - name: email
       direction: asc
->>>>>>> Stashed changes

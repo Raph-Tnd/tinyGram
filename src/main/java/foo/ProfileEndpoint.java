@@ -7,22 +7,18 @@ import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.config.Named;
 import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.datastore.*;
-import com.google.appengine.api.users.User;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-<<<<<<< Updated upstream
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import io.swagger.annotations.ApiParam;
 
 import java.util.Date;
-=======
 import com.google.appengine.api.users.User;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
->>>>>>> Stashed changes
 
 
 @Api(name = "myApi",
@@ -59,8 +55,6 @@ public class ProfileEndpoint {
             return entityFound;
         }
     }
-<<<<<<< Updated upstream
-=======
 
     @ApiMethod(name = "getProfile", path = "profile/get/{profileName}",httpMethod = HttpMethod.GET)
     public Entity getProfile(User user, @Named("profileName") String profileName) throws EntityNotFoundException {
@@ -138,5 +132,4 @@ public class ProfileEndpoint {
 
         return profileToFollow;
     }
->>>>>>> Stashed changes
 }

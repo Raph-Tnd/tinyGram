@@ -12,6 +12,7 @@ import com.google.api.server.spi.auth.common.User;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.*;
 
 @Api(name = "myApi",
      version = "v1",
@@ -24,7 +25,7 @@ import java.util.Random;
 		   packagePath = "")
      )
 
-public class ScoreEndpoint {
+public class PostEndpoint {
 
 
 
@@ -138,8 +139,6 @@ public class ScoreEndpoint {
 		ds.delete(toRemove);
 		return post;
 	}
-<<<<<<< Updated upstream:src/main/java/foo/ScoreEndpoint.java
-=======
   
 	@ApiMethod(name = "likePost", path = "likePost/{keyPost}",httpMethod = HttpMethod.POST)
 	public Entity likePost(User user, @Named("keyPost") String keyPost) throws UnauthorizedException, EntityNotFoundException {
@@ -180,5 +179,4 @@ public class ScoreEndpoint {
 
 		return post;
 	}
->>>>>>> Stashed changes:src/main/java/foo/PostEndpoint.java
 }
