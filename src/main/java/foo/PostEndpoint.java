@@ -12,7 +12,6 @@ import com.google.api.server.spi.auth.common.User;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.*;
 
 @Api(name = "myApi",
      version = "v1",
