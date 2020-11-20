@@ -36,14 +36,26 @@ public class TimelineEndpoint {
         if (user == null) {
             throw new UnauthorizedException("Invalid credentials");
         }
+        Entity debug;
+        ArrayList<Entity> collectionDebug = new ArrayList<Entity>();
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         Key profileKey = new Entity("Profile", user.getEmail().split("@")[0]).getKey();
         Entity profile = ds.get(profileKey);
 
-        Object listFollow = profile.getProperty("followed");
+        if(profile == null){
+            debug = new Entity("response");
+            debug.setProperty("message","User's profile not found");
+            collectionDebug.add(debug);
+            return CollectionResponse.<Entity>builder().setItems(collectionDebug).setNextPageToken(cursorString).build();
+        }
+
+        Object listFollow = profile.getProperty("follows");
         //si l'utilisateur ne follow personne
         if (listFollow == null){
-            return null;
+            debug = new Entity("response");
+            debug.setProperty("message","Pas de followers");
+            collectionDebug.add(debug);
+            return CollectionResponse.<Entity>builder().setItems(collectionDebug).setNextPageToken(cursorString).build();
         }
 
         Query q = new Query("Post")

@@ -251,7 +251,7 @@ var Profile = {
             url: "_ah/api/myApi/v1/profile/"+Profile.name+"/follow"+'?access_token='+encodeURIComponent(controller.userID),
         })
         .then(function(result){
-            console.log("Followed"+result.properties.name);
+            console.log("Followed "+result.properties.name);
         })
         .catch(function(e){
             console.log(e.messages);
@@ -367,10 +367,11 @@ var SearchBar = {
             placeholder:"Recherche un profile",
             oninput: function(e) { SearchBar.body = e.target.value }}),
         ]),
-        m("button[type=submit]", {class:'buttonSkin', id:'searchBarPostButton'},"Go !"),
+        m("button[type=submit]", {class:'buttonSkin', id:'searchBarButton'},"Search"),
     ])
     }
 }
+
 var PageProfile = {
     view: function(vnode){
         return [m(Header),m(Profile, {name: vnode.attrs.user})]

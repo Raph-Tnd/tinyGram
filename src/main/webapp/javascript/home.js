@@ -29,24 +29,6 @@ var Home = {
     }
 }
 
-var SearchBar = {
-    body:"",
-    view:function(){
-        return m('form', {class: 'searchBarForm', onsubmit: function(e){
-            controller.redirectTo("/profile/"+SearchBar.body)
-        }},
-        [
-        m('div', m("input[type=textarea]", {
-        	id: 'searchBarTextInput',
-            class:'textInputSkin',
-            placeholder:"Rechercher profil...",
-            oninput: function(e) { SearchBar.body = e.target.value }})),
-        m("button",{class:'buttonSkin', id:'searchBarButton'},"Search"),
-    ])
-    }
-}
-
-
 var Header = {
     view: function(){
         return m('div',{id: 'headerContainer'},[
