@@ -21,8 +21,6 @@ var controller = {
             controller.loadGoogleUser();
             //controller.redirectTo("/profile/"+Profile.name);
         }
-
-
     },
     loadGoogleUser: function(){
         console.log("loadGoogleUser");
@@ -32,15 +30,7 @@ var controller = {
             return;
         }
         console.log("success");
-
         var id_token = controller.currentUser.getAuthResponse().id_token;
-        /*var profile = controller.currentUser.getBasicProfile();
-        if(Profile.name == ""){
-            Profile.name=emailToUniqueName(profile.getEmail());
-            Profile.email=profile.getEmail();
-        }
-
-         */
         controller.userID=id_token;
     },
     listenerGoogleUser: function(){
@@ -49,7 +39,6 @@ var controller = {
             controller.loadGoogleUser();
             console.log("Call redirect");
             Profile.createProfile();
-            //controller.redirectTo("/profile/"+Profile.name);
         }
         else{
             console.log(this);
@@ -138,7 +127,6 @@ var Profile = {
             }else{
                 console.log("No post to show");
             }
-
             if ('nextPageToken' in result) {
                 Profile.nextToken= result.nextPageToken
             } else {
@@ -289,27 +277,13 @@ var PostForm = {
         ])
     }
 }
+
 var PostView = {
-    /* redraw: function(){
-        console.log("redraw");
-        m.redraw();
-    },*/
-    /*isLiked: function(){
-        if(  item.properties.likel.includes(emailToUniqueName(controller.currentUser.getBasicProfile().getEmail()))  ) {
-            buttonState = 'likeButton'
-        } else {
-            buttonState = 'likedButton' };
-        return buttonState;
-    },*/
-
     view: function(vnode) {
-
         return m('div', [
             m('div',{class:'subtitle'}),
             vnode.attrs.profile.list.map(function(item) {
-
                 if (vnode.attrs.profile.userIsProfile){
-
                     return m('div', {class:'postContainer'}, [
                         m('button', {class:'postDeleteButton', onclick: function(e) {
                                     Profile.deleteMessage(item.key.name)
@@ -322,7 +296,7 @@ var PostView = {
                         m('img', {class: 'postImage', 'src': item.properties.url}),
 
                         m('div', {class: 'postLikeContainer'},
-                            m('a.link[href=#]', {class:'postLikeButton', onclick: function(e) { }},
+                            m('button', {class:'postLikeButton', onclick: function(e) {Profile.likePost(item.key.name)}},
                             		m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
                             ),
                             m('label', {class: 'postLikeCounter'}, item.properties.likec),
@@ -335,11 +309,11 @@ var PostView = {
                         ),
                         m('img', {class: 'postImage', 'src': item.properties.url}),
                         m('div', {class: 'postLikeContainer'},
-                                m('a.link[href=#]', {class:'buttonSkin', onclick: function(e) { }},
-                                		m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
-                                ),
-                                m('label', {class: 'postLikeCounter'}, item.properties.likec + " j'aimes"),
+                            m('button', {class:'buttonSkin', onclick: function(e) {Profile.likePost(item.key.name)}},
+                                    m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
                             ),
+                            m('label', {class: 'postLikeCounter'}, item.properties.likec + " j'aimes"),
+                        ),
                     ])
                 }
             }),
@@ -372,12 +346,6 @@ var SearchBar = {
     }
 }
 
-var PageProfile = {
-    view: function(vnode){
-        return [m(Header),m(Profile, {name: vnode.attrs.user})]
-    }
-}
-
 var FriendsList = {
 	view: function() {
 		return m(FriendsListView)
@@ -393,7 +361,7 @@ var TimeLine = {
             TimeLine.list.map(function(item) {
                 return m('div', {class:'postContainer'}, [
                     m('div', {class: 'likeDiv'},
-                        m('a.link[href=#]', {class:'likeButton', onclick: function(e) { }},"like"),
+                        m('button', {class:'likeButton', onclick: function(e){Profile.likePost(item.key.name)}},"like"),
                         m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
                     ),
                     m('div', {class: 'bodyDiv'},
@@ -456,6 +424,21 @@ var TimeLine = {
     }
 }
 
+var ProfilePage = {
+    view: function(vnode){
+        return [m(Header),m(Profile, {name: vnode.attrs.user})]
+    }
+}
 
+var HomePage = {
+    view: function (){
+        return [m(Header),m(Home)]
+    }
+}
 
+var TimeLinePage = {
+    view: function (){
+        return [m(Header),m(TimeLine)]
+    }
+}
 

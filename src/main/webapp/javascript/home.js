@@ -1,8 +1,4 @@
-var HomePage = {
-    view: function (){
-        return [m(Home),m(Header),]
-    }
-}
+
 var Home = {
     oncreate: function(){
         console.log("Calling render");
@@ -35,7 +31,7 @@ var Header = {
                   m("button", {class:'buttonSkin', id:'headerDisconnectButton', onclick: function() {
                                   	controller.disconnectUser();
                                   }},"Déconnexion"),
-                      m(m.route.Link,{href:"/"},m('img',{id:'headerHomeButton',src:'./img/logo_maison.png'})),
+                      m(m.route.Link,{href:"/timeline"},m('img',{id:'headerHomeButton',src:'./img/logo_maison.png'})),
                     
                   m('div',{id:'headerInputContainer'},m(SearchBar)),
                   m(m.route.Link,{href:"/"},m('div',{id:'headerLogo'},'TinyGram')),])

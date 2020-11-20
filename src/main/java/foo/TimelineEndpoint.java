@@ -38,6 +38,7 @@ public class TimelineEndpoint {
         }
         Entity debug;
         ArrayList<Entity> collectionDebug = new ArrayList<Entity>();
+
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         Key profileKey = new Entity("Profile", user.getEmail().split("@")[0]).getKey();
         Entity profile = ds.get(profileKey);

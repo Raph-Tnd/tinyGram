@@ -104,8 +104,15 @@
 	top: 5px;
 }
 
-
-
+/*button timeline*/
+.nextButton {
+	position: relative;
+	max-width: 50px;
+	left: 50%;
+	height: auto;
+	margin-top: 80px;
+	transform: translate(-50%, 0%);
+}
 
 /*#mainTitle {
 	margin: 0;
@@ -240,12 +247,7 @@
 	height: auto;
 	margin: 15px;
 }
-.nextButton {
-	position: absolute;
-	height: auto;
-	width: 10%;
-	left: 45%;,
-}
+
 .fieldBody {
 	border: 1px solid black;
 	width: 100%;
