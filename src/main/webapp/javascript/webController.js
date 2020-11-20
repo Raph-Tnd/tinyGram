@@ -92,7 +92,7 @@ var Profile = {
                 m("h1", {class: 'profileName'}, Profile.name),
                 m("img",{class: "profilePicture", "src":Profile.url}),
                 //m("button",{class:"button", onclick: function(e) { Profile.loadList()}},"Msgs"),
-                m("div", {class: 'tile'}, m('div',{class:'postForm'},m(PostForm))),
+                m(PostForm),
                 m("div",m(PostView,{profile: Profile}))
             ])
         }else{
@@ -251,7 +251,7 @@ var Profile = {
             url: "_ah/api/myApi/v1/profile/"+Profile.name+"/follow"+'?access_token='+encodeURIComponent(controller.userID),
         })
         .then(function(result){
-            console.log("Followed "+result.properties.name);
+            console.log("Followed"+result.properties.name);
         })
         .catch(function(e){
             console.log(e.messages);
@@ -311,30 +311,35 @@ var PostView = {
                 if (vnode.attrs.profile.userIsProfile){
 
                     return m('div', {class:'postContainer'}, [
-                        m('div', {class: 'likeDiv'},
-                            m('button', {class: 'likeButton', onclick: function(e) { Profile.likePost(item.key.name) }},"like"),
-                            m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
-                        ),
                         m('button', {class:'postDeleteButton', onclick: function(e) {
                                     Profile.deleteMessage(item.key.name)
                                 }},
                             m('img', {class:'postDeleteButtonImage', src:"img/trashIcon.png"}),
                         ),
-                        m('div', {class: 'bodyDiv'},
-                            m('label', {class: 'bodyPost'}, item.properties.body),
+                        m('div', {class: 'postContainer'},
+                            m('label', {class: 'postBodyContainer'}, item.properties.body),
                         ),
-                        m('img', {class: 'imagePost', 'src': item.properties.url}),
+                        m('img', {class: 'postImage', 'src': item.properties.url}),
+
+                        m('div', {class: 'postLikeContainer'},
+                            m('a.link[href=#]', {class:'postLikeButton', onclick: function(e) { }},
+                            		m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
+                            ),
+                            m('label', {class: 'postLikeCounter'}, item.properties.likec),
+                        ),
                     ])
                 }else{
                     return m('div', {class:'postContainer'}, [
-                        m('div', {class: 'likeDiv'},
-                            m('button', {class: 'likeButton', onclick: function(e) { Profile.likePost(item.key.name) }},"like"),
-                            m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
+                        m('div', {class: 'postBodyContainer'},
+                            m('label', {class: 'postBody'}, item.properties.body),
                         ),
-                        m('div', {class: 'bodyDiv'},
-                            m('label', {class: 'bodyPost'}, item.properties.body),
-                        ),
-                        m('img', {class: 'imagePost', 'src': item.properties.url}),
+                        m('img', {class: 'postImage', 'src': item.properties.url}),
+                        m('div', {class: 'postLikeContainer'},
+                                m('a.link[href=#]', {class:'buttonSkin', onclick: function(e) { }},
+                                		m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
+                                ),
+                                m('label', {class: 'postLikeCounter'}, item.properties.likec + " j'aimes"),
+                            ),
                     ])
                 }
             }),

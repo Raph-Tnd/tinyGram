@@ -62,10 +62,6 @@ public class Profile {
         return description;
     }
 
-    public Set<String> getFollows(){
-        return follows;
-    }
-
     public Set<String> getFollowers(){
         return followers;
     }

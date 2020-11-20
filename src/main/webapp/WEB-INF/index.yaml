@@ -1,5 +1,4 @@
 indexes:
-
 - kind: Post
   properties:
     - name: owner
