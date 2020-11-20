@@ -53,10 +53,18 @@ function gapiRender(id){
 }
 
 
-
 m.route(document.body, "/",{
 	"/": HomePage,
 	"/timeline": TimeLine,
 	"/profile/:user": PageProfile,
-	"/profile/:user/friends": FriendsList
+	"/abonnements": { onmatch: function() {
+           if (!controller.authInstance.isSignedIn.get()) m.route.set("/")
+           else return PageAbonnements
+           }
+    }
+
 })
+
+
+
+

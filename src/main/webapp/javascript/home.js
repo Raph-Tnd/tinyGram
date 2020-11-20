@@ -1,6 +1,6 @@
 var HomePage = {
     view: function (){
-        return [m(Home),m(Header),]
+        return [m(Home),m(Header)]
     }
 }
 var Home = {
@@ -21,10 +21,11 @@ var Home = {
                 m(m.route.Link,{href: "/profile/tenaudraphael", class: 'buttonSkin', id:'rightButton'},"Profile"),
                 
             ),
-            m('div', {class:'signatureContainer'},
+            m('div', {class:'signatureContainer'},[
                 m.trust('<p>' +
-                    'Louis NORMAND, Raphaël TENAUD, Sylvain BEAUDOIN, Thibault COLIN  -Web & Cloud-</p>')),
-
+                    'Louis NORMAND, Raphaël TENAUD, Sylvain BEAUDOIN, Thibault COLIN  -Web & Cloud-</p>'),
+                m(m.route.Link,{href:"/abonnements"},m('img',{id:'homeLogoHeader',src:'./img/logo_maison.png'}))
+                ]),
         ])
     }
 }
@@ -60,6 +61,7 @@ var Header = {
 
     }
 }
+
 
 
 

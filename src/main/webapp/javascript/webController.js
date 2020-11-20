@@ -455,6 +455,12 @@ var TimeLine = {
     }
 }
 
+var PageAbonnements = {
+    view: function(){
+        return m('div',"COUCOU")
+    }
+}
+
 
 
 
