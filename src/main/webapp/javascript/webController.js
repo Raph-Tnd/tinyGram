@@ -309,7 +309,7 @@ var PostView = {
                         ),
                         m('img', {class: 'postImage', 'src': item.properties.url}),
                         m('div', {class: 'postLikeContainer'},
-                            m('button', {class:'buttonSkin', onclick: function(e) {Profile.likePost(item.key.name)}},
+                            m('button', {class:'postLikeButton', onclick: function(e) {Profile.likePost(item.key.name)}},
                                     m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
                             ),
                             m('label', {class: 'postLikeCounter'}, item.properties.likec + " j'aimes"),
@@ -360,20 +360,22 @@ var TimeLine = {
             m('div',{class:'subtitle'}),
             TimeLine.list.map(function(item) {
                 return m('div', {class:'postContainer'}, [
-                    m('div', {class: 'likeDiv'},
-                        m('button', {class:'likeButton', onclick: function(e){Profile.likePost(item.key.name)}},"like"),
-                        m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
+                    m('div', {class: 'postBodyContainer'},
+                    		m('label', {class: 'postBody'}, item.properties.body),
                     ),
-                    m('div', {class: 'bodyDiv'},
-                        m('label', {class: 'bodyPost'}, item.properties.body),
+                    m('img', {class: 'postImage', 'src': item.properties.url}),
+                    m('div', {class: 'postLikeContainer'},
+                    		m('button', {class:'postLikeButton', onclick: function(e) {Profile.likePost(item.key.name)}},
+                    				m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
+                    		),
+                    		m('label', {class: 'postLikeCounter'}, item.properties.likec + " j'aimes"),
                     ),
-                    m('img', {class: 'imagePost', 'src': item.properties.url}),
                 ])
             }),
             m("input", {
                 type: "image",
                 src: "/img/nextArrow.png",
-                class: "nextButton",
+                class: "postNextButton",
                 onclick: function(e) {
                     TimeLine.getTimeline()
                 },
