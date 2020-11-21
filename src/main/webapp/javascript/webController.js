@@ -185,7 +185,7 @@ var Profile = {
                 }
             });
             Profile.list.splice(i,1,result);
-           // PostView.redraw();
+            //PostView.redraw();
         })
         .catch(function(e) {
             console.log(e.message)
@@ -305,6 +305,17 @@ var PostForm = {
 }
 
 var PostView = {
+  isLiked: function(temp){
+    console.log(temp);
+        if (temp.properties.likel != null) {
+            if( temp.properties.likel.includes(emailToUniqueName(controller.currentUser.getBasicProfile().getEmail())) ) {
+                buttonState = 'likedButton'
+            }
+        }else {
+            buttonState = 'likeButton'
+        };
+        return buttonState;
+    },
     view: function(vnode) {
         return m('div', [
             m('div',{class:'subtitle'}),
@@ -322,7 +333,7 @@ var PostView = {
                         m('img', {class: 'postImage', 'src': item.properties.url}),
 
                         m('div', {class: 'postLikeContainer'},
-                            m('button', {class:'postLikeButton', onclick: function(e) {Profile.likePost(item.key.name)}},
+                            m('button', {class: PostView.isLiked(item), onclick: function(e) {Profile.likePost(item.key.name)}},
                             		m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
                             ),
                             m('label', {class: 'postLikeCounter'}, item.properties.likec),
@@ -335,7 +346,7 @@ var PostView = {
                         ),
                         m('img', {class: 'postImage', 'src': item.properties.url}),
                         m('div', {class: 'postLikeContainer'},
-                            m('button', {class:'postLikeButton', onclick: function(e) {Profile.likePost(item.key.name)}},
+                            m('button', {class: PostView.isLiked(item), onclick: function(e) {Profile.likePost(item.key.name)}},
                                     m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
                             ),
                             m('label', {class: 'postLikeCounter'}, item.properties.likec + " j'aimes"),
