@@ -81,16 +81,16 @@ var Profile = {
         if(Profile.userIsProfile){
             return m('div', {class:'profileContainer'}, [
                 m("h1", {class: 'profileName'}, Profile.name),
-                m("h2", {class: 'profileName'}, Profile.description),
+                m("p", {class: 'profileDescription'}, Profile.description),
                 m("img",{class: "profilePicture", "src":Profile.url}),
-                m(m.route.Link,{href:"/profile/"+Profile.accountName+"/update"},m('button',{class:'buttonSkin'},"updateProfile")),
+                m(m.route.Link,{href:"/profile/"+Profile.accountName+"/update"},m('button',{class:'buttonSkin',id:'profileModification'},"Modification du Profil")),
                 m(PostForm),
                 m("div",m(PostView,{profile: Profile}))
             ])
         }else{
             return m('div', {class:'profileContainer'}, [
                 m("h1", {class: 'profileName'}, Profile.name),
-                m("h2", {class: 'profileName'}, Profile.description),
+                m("p", {class: 'profileDescription'}, Profile.description),
                 m("img",{class: "profilePicture", "src":Profile.url}),
                 m("button",{class:"buttonSkin", id: 'profileFollow', onclick: function(e) { Profile.follow()}},"Follow"),
                 m("div", {class: "profilePostSeparator"}),
@@ -306,38 +306,40 @@ var PostForm = {
 
 var PostView = {
     isLiked: function(temp){
-        buttonState = 'postLikeButton';
+        buttonState = 'img/unliked.png';
         console.log(temp);
             if (temp.properties.likel != null) {
                 if( temp.properties.likel.includes(emailToUniqueName(controller.currentUser.getBasicProfile().getEmail())) ) {
-                    buttonState = 'likedButton';
+                    buttonState = 'img/liked.png';
                 }
             }else {
-                buttonState = 'postLikeButton';
+                buttonState = 'img/unliked.png';
             };
             return buttonState;
         },
         view: function(vnode) {
             return m('div', [
-                m('div',{class:'subtitle'}),
                 vnode.attrs.profile.list.map(function(item) {
                     if (vnode.attrs.profile.userIsProfile){
                         return m('div', {class:'postContainer'}, [
+
                             m('button', {class:'postDeleteButton', onclick: function(e) {
                                         Profile.deleteMessage(item.key.name)
-                                    }},
+                                }},
                                 m('img', {class:'postDeleteButtonImage', src:"img/trashIcon.png"}),
                             ),
-                            m('div', {class: 'postContainer'},
-                                m('label', {class: 'postBodyContainer'}, item.properties.body),
-                            ),
+
+                            m('label', {class: 'postBodyContainer'}, item.properties.body),
+
                             m('img', {class: 'postImage', 'src': item.properties.url}),
 
                             m('div', {class: 'postLikeContainer'},
-                                m('button', {class: PostView.isLiked(item), onclick: function(e) {Profile.likePost(item.key.name)}},
-                                        m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
+
+                                m('button', {class: 'postLikeButton', onclick: function(e) {Profile.likePost(item.key.name)}},
+                                        m('img', {class: 'postLikeButtonImage', src:PostView.isLiked(item)})
                                 ),
-                                m('label', {class: 'postLikeCounter'}, item.properties.likec+ " like"),
+
+                                m('label', {class: 'postLikeCounter'}, item.properties.likec+ " likes"),
                             ),
                         ])
                     }else{
@@ -347,10 +349,10 @@ var PostView = {
                             ),
                             m('img', {class: 'postImage', 'src': item.properties.url}),
                             m('div', {class: 'postLikeContainer'},
-                                m('button', {class: PostView.isLiked(item), onclick: function(e) {Profile.likePost(item.key.name)}},
-                                        m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
+                                m('button', {class: 'postLikeButton', onclick: function(e) {Profile.likePost(item.key.name)}},
+                                        m('img', {class: 'postLikeButtonImage', src:PostView.isLiked(item)})
                                 ),
-                                m('label', {class: 'postLikeCounter'}, item.properties.likec + " j'aimes"),
+                                m('label', {class: 'postLikeCounter'}, item.properties.likec + " likes"),
                             ),
                         ])
                     }
@@ -372,9 +374,9 @@ var ProfileUpdate = {
     url:"",
     desc:"",
     view: function() {
-        return m('div',[
+        return m('div', {class:'modificationContainerTotal'}, [
             m('form',{
-                class: 'formContainer',
+                class: 'modificationContainer',
                 onsubmit: function (e){
                     if (ProfileUpdate.name == ""){return ;}
                     Profile.updateProfile(ProfileUpdate.name, "null", "null",);
@@ -384,14 +386,14 @@ var ProfileUpdate = {
                 m('div',[
                     m('div',{class:'control'}, m("input[type=text]", {
                         class: 'textInputSkin',
-                        id:'formInput',
+                        id:'modificationInput',
                         placeholder:"new Name",
                         oninput: function(e) {ProfileUpdate.name = e.target.value}})),
                 ]),
-                m('div',{class:'control'},m("button[type=submit]", {class:'buttonSkin', id:'postButton'},"Change name"))
+                m('div',{class:'control'},m("button[type=submit]", {class:'buttonSkin', id:'modificationButton'},"Change name"))
             ]),
             m('form',{
-                class: 'formContainer',
+                class: 'modificationContainer',
                 onsubmit: function (e){
                     if (ProfileUpdate.url == ""){return ;}
                     Profile.updateProfile("null",ProfileUpdate.url, "null",);
@@ -401,14 +403,14 @@ var ProfileUpdate = {
                 m('div',[
                     m('div',{class:'control'}, m("input[type=text]", {
                         class: 'textInputSkin',
-                        id:'formInput',
+                        id:'modificationInput',
                         placeholder:"URL",
                         oninput: function(e) {ProfileUpdate.url = e.target.value}})),
                 ]),
-                m('div',{class:'control'},m("button[type=submit]", {class:'buttonSkin', id:'postButton'},"Change Image"))
+                m('div',{class:'control'},m("button[type=submit]", {class:'buttonSkin', id:'modificationButton'},"Change Image"))
             ]),
             m('form',{
-                class: 'formContainer',
+                class: 'modificationContainer',
                 onsubmit: function (e){
                     Profile.updateProfile("null","null", ProfileUpdate.desc);
                 }
@@ -417,11 +419,11 @@ var ProfileUpdate = {
                 m('div',[
                     m('div',{class:'control'}, m("input[type=text]", {
                         class: 'textInputSkin',
-                        id:'formInput',
+                        id:'modificationInput',
                         placeholder:"description",
                         oninput: function(e) {ProfileUpdate.desc = e.target.value}})),
                 ]),
-                m('div',{class:'control'},m("button[type=submit]", {class:'buttonSkin', id:'postButton'},"Change Description"))
+                m('div',{class:'control'},m("button[type=submit]", {class:'buttonSkin', id:'modificationButton'},"Change Description"))
             ])
 
         ])
@@ -451,7 +453,6 @@ var TimeLine = {
     list: [],
     view: function(){
         return m('div', [
-            m('div',{class:'subtitle'}),
             TimeLine.list.map(function(item) {
                 return m('div', {class:'postContainer'}, [
                     m('div', {class: 'postBodyContainer'},
@@ -460,9 +461,9 @@ var TimeLine = {
                     m('img', {class: 'postImage', 'src': item.properties.url}),
                     m('div', {class: 'postLikeContainer'},
                     		m('button', {class:'postLikeButton', onclick: function(e) {Profile.likePost(item.key.name)}},
-                    				m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
+                    				m('img', {class: 'postLikeButtonImage', src:PostView.isLiked(item)})
                     		),
-                    		m('label', {class: 'postLikeCounter'}, item.properties.likec + " j'aimes"),
+                    		m('label', {class: 'postLikeCounter'}, item.properties.likec + " like"),
                     ),
                 ])
             }),
