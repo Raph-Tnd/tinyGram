@@ -185,6 +185,18 @@ var Profile = {
             console.log(e.message)
         })
     },
+    createFakeProfile: function(nbProfile) {
+    	return m.request({
+    		method: "POST",
+    		url: "_ah/api/myAPI/v1/profile/createFake/"+nbProfile
+    	})
+    	.then(function() {
+    		console.log("created");
+    	})
+    	.catch(function(e) {
+    		console.log(e.message, e.code)
+    	})
+    },
     createProfile: function(){
         return m.request({
             method: "POST",

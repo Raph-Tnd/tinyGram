@@ -33,7 +33,7 @@ import java.util.List;
 )
 
 public class ProfileEndpoint {
-
+	
     @ApiMethod(name = "createProfile", path = "profile/create", httpMethod = HttpMethod.POST)
     public Entity createProfile(User user) throws UnauthorizedException {
         Entity entityFound = null;
