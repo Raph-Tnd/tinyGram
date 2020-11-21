@@ -305,65 +305,66 @@ var PostForm = {
 }
 
 var PostView = {
-  isLiked: function(temp){
-    console.log(temp);
-        if (temp.properties.likel != null) {
-            if( temp.properties.likel.includes(emailToUniqueName(controller.currentUser.getBasicProfile().getEmail())) ) {
-                buttonState = 'likedButton'
-            }
-        }else {
-            buttonState = 'likeButton'
-        };
-        return buttonState;
-    },
-    view: function(vnode) {
-        return m('div', [
-            m('div',{class:'subtitle'}),
-            vnode.attrs.profile.list.map(function(item) {
-                if (vnode.attrs.profile.userIsProfile){
-                    return m('div', {class:'postContainer'}, [
-                        m('button', {class:'postDeleteButton', onclick: function(e) {
-                                    Profile.deleteMessage(item.key.name)
-                                }},
-                            m('img', {class:'postDeleteButtonImage', src:"img/trashIcon.png"}),
-                        ),
-                        m('div', {class: 'postContainer'},
-                            m('label', {class: 'postBodyContainer'}, item.properties.body),
-                        ),
-                        m('img', {class: 'postImage', 'src': item.properties.url}),
-
-                        m('div', {class: 'postLikeContainer'},
-                            m('button', {class: PostView.isLiked(item), onclick: function(e) {Profile.likePost(item.key.name)}},
-                            		m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
-                            ),
-                            m('label', {class: 'postLikeCounter'}, item.properties.likec),
-                        ),
-                    ])
-                }else{
-                    return m('div', {class:'postContainer'}, [
-                        m('div', {class: 'postBodyContainer'},
-                            m('label', {class: 'postBody'}, item.properties.body),
-                        ),
-                        m('img', {class: 'postImage', 'src': item.properties.url}),
-                        m('div', {class: 'postLikeContainer'},
-                            m('button', {class: PostView.isLiked(item), onclick: function(e) {Profile.likePost(item.key.name)}},
-                                    m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
-                            ),
-                            m('label', {class: 'postLikeCounter'}, item.properties.likec + " j'aimes"),
-                        ),
-                    ])
+    isLiked: function(temp){
+        buttonState = 'postLikeButton';
+        console.log(temp);
+            if (temp.properties.likel != null) {
+                if( temp.properties.likel.includes(emailToUniqueName(controller.currentUser.getBasicProfile().getEmail())) ) {
+                    buttonState = 'likedButton';
                 }
-            }),
-            m("input", {
-                type: "image",
-                src: "/img/nextArrow.png",
-                class: "postNextButton",
-                onclick: function(e) {
-                    vnode.attrs.profile.next()
-                },
-            }),
-        ])
-    }
+            }else {
+                buttonState = 'postLikeButton';
+            };
+            return buttonState;
+        },
+        view: function(vnode) {
+            return m('div', [
+                m('div',{class:'subtitle'}),
+                vnode.attrs.profile.list.map(function(item) {
+                    if (vnode.attrs.profile.userIsProfile){
+                        return m('div', {class:'postContainer'}, [
+                            m('button', {class:'postDeleteButton', onclick: function(e) {
+                                        Profile.deleteMessage(item.key.name)
+                                    }},
+                                m('img', {class:'postDeleteButtonImage', src:"img/trashIcon.png"}),
+                            ),
+                            m('div', {class: 'postContainer'},
+                                m('label', {class: 'postBodyContainer'}, item.properties.body),
+                            ),
+                            m('img', {class: 'postImage', 'src': item.properties.url}),
+
+                            m('div', {class: 'postLikeContainer'},
+                                m('button', {class: PostView.isLiked(item), onclick: function(e) {Profile.likePost(item.key.name)}},
+                                        m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
+                                ),
+                                m('label', {class: 'postLikeCounter'}, item.properties.likec+ " like"),
+                            ),
+                        ])
+                    }else{
+                        return m('div', {class:'postContainer'}, [
+                            m('div', {class: 'postBodyContainer'},
+                                m('label', {class: 'postBody'}, item.properties.body),
+                            ),
+                            m('img', {class: 'postImage', 'src': item.properties.url}),
+                            m('div', {class: 'postLikeContainer'},
+                                m('button', {class: PostView.isLiked(item), onclick: function(e) {Profile.likePost(item.key.name)}},
+                                        m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
+                                ),
+                                m('label', {class: 'postLikeCounter'}, item.properties.likec + " j'aimes"),
+                            ),
+                        ])
+                    }
+                }),
+                m("input", {
+                    type: "image",
+                    src: "/img/nextArrow.png",
+                    class: "postNextButton",
+                    onclick: function(e) {
+                        vnode.attrs.profile.next()
+                    },
+                }),
+            ])
+        }
 }
 
 var ProfileUpdate = {

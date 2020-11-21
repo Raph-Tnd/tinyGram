@@ -117,7 +117,7 @@
 	font-weight: bold;
 	left: 60px;
 	display: block;
-	position: relative;
+	position: absolute;
 }
 
 /*button timeline*/
