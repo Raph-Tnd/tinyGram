@@ -1,6 +1,8 @@
 function entityToProfile(entity){
     Profile.email = entity.properties.email;
     Profile.name = entity.properties.name;
+    Profile.accountName = entity.properties.accountName;
+    Profile.description = entity.properties.description;
     Profile.url = entity.properties.url;
 }
 
@@ -10,85 +12,88 @@ var controller = {
     callLoginButton:false,
     callCheckUserIsProfile:false,
     profileCheck: "",
+    userID: "",
+    callFollow:false,
     setGoogleAuth: function(googleAuth){
-        this.authInstance = googleAuth;
+        controller.authInstance = googleAuth;
         console.log("Calling listener");
         controller.authInstance.currentUser.listen(controller.listenerGoogleUser);
         //if user already signed in, redirect automatically
         if (controller.authInstance.isSignedIn.get()){
             controller.loadGoogleUser();
-            controller.redirectTo("/profile/"+Profile.name);
         }
     },
     loadGoogleUser: function(){
         console.log("loadGoogleUser");
-        this.currentUser = this.authInstance.currentUser.get();
-        if (this.currentUser == ""){
+        controller.currentUser = controller.authInstance.currentUser.get();
+        if (controller.currentUser == ""){
             console.log("failed");
-
+            return;
         }
         console.log("success");
-        var profile = this.currentUser.getBasicProfile();
-        var id_token =this.currentUser.getAuthResponse().id_token;
-        Profile.name=emailToUniqueName(profile.getEmail());
-        Profile.email=profile.getEmail();
-        Profile.ID=id_token;
-    },
-    disconnectUser: function (){
-        console.log("disconnectUser");
-        var temp = this.authInstance.currentUser.get();
-        if (temp == null){return;}
-        temp.disconnect();
-        controller.currentUser = "";
-        this.redirectTo("/");
+        var id_token = controller.currentUser.getAuthResponse().id_token;
+        controller.userID=id_token;
     },
     listenerGoogleUser: function(){
         console.log("listening");
-        if (this.authInstance.isSignedIn.get()){
-            this.loadGoogleUser();
+        if (controller.authInstance.isSignedIn.get()){
+            controller.loadGoogleUser();
             console.log("Call redirect");
             Profile.createProfile();
-            this.redirectTo("/profile/"+Profile.name);
         }
         else{
-
+            console.log(this);
         }
+    },
+    disconnectUser: function (){
+        console.log("disconnectUser");
+        var temp = controller.authInstance.currentUser.get();
+        if (temp == null){return;}
+        temp.disconnect();
+        controller.currentUser = "";
+        controller.redirectTo("/");
     },
     redirectTo: function(route){
         //wait for Profile.name to be updated when logging in before redirecting to User's Timeline
         console.log("redirecting to "+route);
         m.route.set(route);
+    },
+    searchProfile: function(profileName){
+        console.log("Searching for "+profileName);
+        Profile.loadProfile(profileName);
+        controller.redirectTo("/profile/"+profileName);
     }
 }
 
 var Profile = {
     name:"",
+    accountName:"",
+    description:"",
     email:"",
-    ID:"",
     url:"",
     nextToken:"",
     userIsProfile:false,
     list:[],
     view: function(vnode){
-        if(Profile.name ==""){
-            Profile.loadProfile(vnode.attrs.name);
+        if(Profile.accountName ==""){
+            Profile.loadProfile(vnode.attrs.user_url);
         }
-        if(this.userIsProfile){
-            return m('div', {class:'container'}, [
-                m("h1", {class: 'title'}, Profile.name),
+        if(Profile.userIsProfile){
+            return m('div', {class:'profileContainer'}, [
+                m("h1", {class: 'profileName'}, Profile.name),
+                m("h2", {class: 'profileName'}, Profile.description),
                 m("img",{class: "profilePicture", "src":Profile.url}),
-                //m("button",{class:"button", onclick: function(e) { Profile.loadList()}},"Msgs"),
-                m("button", {class:'buttonSkin', id:'disconnectButton', onclick: function() {
-                	controller.disconnectUser();
-                }},"Déconnexion"),
-                m("div", {class: 'tile'}, m('div',{class:'postForm'},m(PostForm))),
+                m(m.route.Link,{href:"/profile/"+Profile.accountName+"/update"},m('button',{class:'buttonSkin'},"updateProfile")),
+                m(PostForm),
                 m("div",m(PostView,{profile: Profile}))
             ])
         }else{
-            return m('div', {class:'container'}, [
-                m("h1", {class: 'title'}, Profile.name),
+            return m('div', {class:'profileContainer'}, [
+                m("h1", {class: 'profileName'}, Profile.name),
+                m("h2", {class: 'profileName'}, Profile.description),
                 m("img",{class: "profilePicture", "src":Profile.url}),
-                m("button",{class:"button", onclick: function(e) { Profile.loadList()}},"Msgs"),
+                m("button",{class:"buttonSkin", id: 'profileFollow', onclick: function(e) { Profile.follow()}},"Follow"),
+                m("div", {class: "profilePostSeparator"}),
                 m("div",m(PostView,{profile: Profile}))
             ])
         }
@@ -97,7 +102,7 @@ var Profile = {
     loadList: function() {
         return m.request({
             method: "GET",
-            url: "_ah/api/myApi/v1/profile/"+Profile.name+"/post"+'?access_token=' + encodeURIComponent(Profile.ID)
+            url: "_ah/api/myApi/v1/profile/"+Profile.accountName+"/post"+'?access_token=' + encodeURIComponent(controller.userID)
         })
         .then(function(result) {
             console.log("load_list:",result)
@@ -114,15 +119,19 @@ var Profile = {
     next: function() {
         return m.request({
             method: "GET",
-            url: "_ah/api/myApi/v1/profile/"+Profile.name+"/post",
+            url: "_ah/api/myApi/v1/profile/"+Profile.accountName+"/post",
             params: {
                 'next':Profile.nextToken,
-                'access_token': encodeURIComponent(Profile.ID)
+                'access_token': encodeURIComponent(controller.userID)
             }
         })
         .then(function(result) {
             console.log("next:",result)
-            result.items.map(function(item){Profile.list.push(item)})
+            if (result.items != null){
+                result.items.map(function(item){Profile.list.push(item)})
+            }else{
+                console.log("No post to show");
+            }
             if ('nextPageToken' in result) {
                 Profile.nextToken= result.nextPageToken
             } else {
@@ -132,10 +141,11 @@ var Profile = {
     },
     postMessage: function(desc,url) {
         var data={'url': url,
-            'body': desc}
+            'body': desc
+        }
         return m.request({
             method: "POST",
-            url: "_ah/api/myApi/v1/postMsg"+'?access_token='+encodeURIComponent(Profile.ID),
+            url: "_ah/api/myApi/v1/postMsg"+'?access_token='+encodeURIComponent(controller.userID),
             params: data,
         })
         .then(function(result) {
@@ -149,7 +159,7 @@ var Profile = {
     deleteMessage: function(name) {
         return m.request({
             method: "DELETE",
-            url: "_ah/api/myApi/v1/deleteMsg/"+name+'?access_token='+encodeURIComponent(Profile.ID)
+            url: "_ah/api/myApi/v1/deleteMsg/"+name+'?access_token='+encodeURIComponent(controller.userID)
         })
         .then(function(result) {
             console.log("delete:",result)
@@ -163,7 +173,7 @@ var Profile = {
     likePost: function(name) {
         return m.request({
             method: "POST",
-            url: "_ah/api/myApi/v1/likePost/"+name+'?access_token='+encodeURIComponent(Profile.ID)
+            url: "_ah/api/myApi/v1/likePost/"+name+'?access_token='+encodeURIComponent(controller.userID)
         })
         .then(function(result) {
             console.log("like:",result);
@@ -184,7 +194,7 @@ var Profile = {
     createProfile: function(){
         return m.request({
             method: "POST",
-            url: "_ah/api/myApi/v1/profile/create"+'?access_token='+encodeURIComponent(Profile.ID),
+            url: "_ah/api/myApi/v1/profile/create"+'?access_token='+encodeURIComponent(controller.userID),
         })
         .then(function(result){
             console.log(result)
@@ -203,12 +213,12 @@ var Profile = {
         }
         if(controller.authInstance.isSignedIn.get()){
             if(profileName == emailToUniqueName(controller.currentUser.getBasicProfile().getEmail())){
-                this.userIsProfile = true;
+                Profile.userIsProfile = true;
             }else{
-                this.userIsProfile = false;
+                Profile.userIsProfile = false;
             }
         }
-        this.getProfile(profileName);
+        Profile.getProfile(profileName);
 
     },
     getProfile: function(profileName){
@@ -224,46 +234,78 @@ var Profile = {
             console.log("message: ",e.messages,"code: ", e.code)
         })
     },
-
-
+    follow: function(){
+        console.log("Call follow");
+        if(controller.authInstance == ""){
+            callFollow = true;
+            return;
+        }
+        return m.request({
+            method: "POST",
+            url: "_ah/api/myApi/v1/profile/"+Profile.accountName+"/follow"+'?access_token='+encodeURIComponent(controller.userID),
+        })
+        .then(function(result){
+            console.log("Followed "+result.properties.name);
+        })
+        .catch(function(e){
+            console.log(e.messages);
+        })
+    },
+    updateProfile: function(name,url, desc){
+        console.log("Call update profile");
+        var data = { 'name': name,
+            'url': url,
+            'description' : desc
+        }
+        console.log(data);
+        return m.request({
+            method: "PUT",
+            url: "_ah/api/myApi/v1/profile/"+Profile.accountName+"/update"+'?access_token='+encodeURIComponent(controller.userID),
+            params: data,
+        })
+        .then(function (result){
+            console.log("updated to " + result );
+            Profile.loadProfile(Profile.accountName);
+        })
+        .catch(function (e){
+            console.log(e)
+        })
+    }
 }
+
 var PostForm = {
     url:"",
     body:"",
     view: function() {
         return m("form", {
+        	class:'formContainer',
             onsubmit: function(e) {
-                if (this.url =="") {return ;}
+                if (PostForm.url =="") {return ;}
                 Profile.postMessage(PostForm.body,PostForm.url)
             }
         },
         [
-        m('div', {class:'field'},[
-        m("label", {class:'label'},"URL de l'image"),
+        m('div',[
         m('div',{class:'control'}, m("input[type=text]", {
-        class:'input',
-        placeholder:"URL",
-        oninput: function(e) {PostForm.url = e.target.value}})),
-        //		          m("img",{"src":this.url}),
+        	class: 'textInputSkin',
+        	id:'formInput',
+        	placeholder:"URL",
+        	oninput: function(e) {PostForm.url = e.target.value}})),
         ]),
         m('div',{class:'field'},[
-        m("label", {class: 'label'},"Description"),
         m('div',{class:'control'},m("input[type=textarea]", {
-        class:'input',
-        placeholder:"Description",
-        oninput: function(e) { PostForm.body = e.target.value }})),
+        	class: 'textInputSkin',
+        	id:'formInput',
+        	placeholder:"Description",
+        	oninput: function(e) { PostForm.body = e.target.value }})),
         ]),
         m('div',{class:'control'},m("button[type=submit]", {class:'buttonSkin', id:'postButton'},"Publier")),
         ])
     }
 }
-var PostView = {
-    /* redraw: function(){
-        console.log("redraw");
-        m.redraw();
-    },*/
 
-    isLiked: function(temp){
+var PostView = {
+  isLiked: function(temp){
     console.log(temp);
         if (temp.properties.likel != null) {
             if( temp.properties.likel.includes(emailToUniqueName(controller.currentUser.getBasicProfile().getEmail())) ) {
@@ -274,48 +316,48 @@ var PostView = {
         };
         return buttonState;
     },
-
     view: function(vnode) {
-
         return m('div', [
             m('div',{class:'subtitle'}),
             vnode.attrs.profile.list.map(function(item) {
-
                 if (vnode.attrs.profile.userIsProfile){
-
                     return m('div', {class:'postContainer'}, [
-                        m('div', {class: 'likeDiv'},
-                            m('button', {class: PostView.isLiked(item), onclick: function(e) { Profile.likePost(item.key.name); } },"like"),
-                            m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
+                        m('button', {class:'postDeleteButton', onclick: function(e) {
+                                    Profile.deleteMessage(item.key.name)
+                                }},
+                            m('img', {class:'postDeleteButtonImage', src:"img/trashIcon.png"}),
                         ),
-                        m('button', {class:'delButton', onclick: function(e) {
-                                Profile.deleteMessage(item.key.name)
-                            }},
-                            m('img', {src:"img/trashIcon.png", class:'trashImg'}),
+                        m('div', {class: 'postContainer'},
+                            m('label', {class: 'postBodyContainer'}, item.properties.body),
                         ),
-                        m('div', {class: 'bodyDiv'},
-                            m('label', {class: 'bodyPost'}, item.properties.body),
+                        m('img', {class: 'postImage', 'src': item.properties.url}),
+
+                        m('div', {class: 'postLikeContainer'},
+                            m('button', {class: PostView.isLiked(item), onclick: function(e) {Profile.likePost(item.key.name)}},
+                            		m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
+                            ),
+                            m('label', {class: 'postLikeCounter'}, item.properties.likec),
                         ),
-                        m('img', {class: 'imagePost', 'src': item.properties.url}),
                     ])
                 }else{
                     return m('div', {class:'postContainer'}, [
-                        m('div', {class: 'likeDiv'},
-                            m('button', {class: PostView.isLiked(item), onclick: function(e) { Profile.likePost(item.key.name) }},"like"),
-                            m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
+                        m('div', {class: 'postBodyContainer'},
+                            m('label', {class: 'postBody'}, item.properties.body),
                         ),
-                        m('div', {class: 'bodyDiv'},
-                            m('label', {class: 'bodyPost'}, item.properties.body),
+                        m('img', {class: 'postImage', 'src': item.properties.url}),
+                        m('div', {class: 'postLikeContainer'},
+                            m('button', {class: PostView.isLiked(item), onclick: function(e) {Profile.likePost(item.key.name)}},
+                                    m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
+                            ),
+                            m('label', {class: 'postLikeCounter'}, item.properties.likec + " j'aimes"),
                         ),
-                        m('img', {class: 'imagePost', 'src': item.properties.url}),
                     ])
                 }
-
             }),
             m("input", {
                 type: "image",
                 src: "/img/nextArrow.png",
-                class: "nextButton",
+                class: "postNextButton",
                 onclick: function(e) {
                     vnode.attrs.profile.next()
                 },
@@ -324,18 +366,181 @@ var PostView = {
     }
 }
 
-var PageProfile = {
-    view: function(vnode){
-        return m(Profile, {name: vnode.attrs.user})
+var ProfileUpdate = {
+    name:"",
+    url:"",
+    desc:"",
+    view: function() {
+        return m('div',[
+            m('form',{
+                class: 'formContainer',
+                onsubmit: function (e){
+                    if (ProfileUpdate.name == ""){return ;}
+                    Profile.updateProfile(ProfileUpdate.name, "null", "null",);
+                }
+            },
+            [
+                m('div',[
+                    m('div',{class:'control'}, m("input[type=text]", {
+                        class: 'textInputSkin',
+                        id:'formInput',
+                        placeholder:"new Name",
+                        oninput: function(e) {ProfileUpdate.name = e.target.value}})),
+                ]),
+                m('div',{class:'control'},m("button[type=submit]", {class:'buttonSkin', id:'postButton'},"Change name"))
+            ]),
+            m('form',{
+                class: 'formContainer',
+                onsubmit: function (e){
+                    if (ProfileUpdate.url == ""){return ;}
+                    Profile.updateProfile("null",ProfileUpdate.url, "null",);
+                }
+            },
+            [
+                m('div',[
+                    m('div',{class:'control'}, m("input[type=text]", {
+                        class: 'textInputSkin',
+                        id:'formInput',
+                        placeholder:"URL",
+                        oninput: function(e) {ProfileUpdate.url = e.target.value}})),
+                ]),
+                m('div',{class:'control'},m("button[type=submit]", {class:'buttonSkin', id:'postButton'},"Change Image"))
+            ]),
+            m('form',{
+                class: 'formContainer',
+                onsubmit: function (e){
+                    Profile.updateProfile("null","null", ProfileUpdate.desc);
+                }
+            },
+            [
+                m('div',[
+                    m('div',{class:'control'}, m("input[type=text]", {
+                        class: 'textInputSkin',
+                        id:'formInput',
+                        placeholder:"description",
+                        oninput: function(e) {ProfileUpdate.desc = e.target.value}})),
+                ]),
+                m('div',{class:'control'},m("button[type=submit]", {class:'buttonSkin', id:'postButton'},"Change Description"))
+            ])
+
+        ])
+
+    }
+}
+
+var SearchBar = {
+    body:"",
+    view:function(){
+        return m('form', {class:'searchBarContainer', onsubmit: function(e){
+            controller.searchProfile(SearchBar.body);
+        }},
+        [
+        m('div',{class:'searchBarForm'},[
+        m("input[type=textarea]", {class:'textInputSkin', id: 'searchBarTextInput',
+            placeholder:"Rechercher un profil",
+            oninput: function(e) { SearchBar.body = e.target.value }}),
+        ]),
+        m("button[type=submit]", {class:'buttonSkin', id:'searchBarButton'},"Search"),
+    ])
     }
 }
 
 var TimeLine = {
-
+    nextToken:"",
     list: [],
     view: function(){
+        return m('div', [
+            m('div',{class:'subtitle'}),
+            TimeLine.list.map(function(item) {
+                return m('div', {class:'postContainer'}, [
+                    m('div', {class: 'postBodyContainer'},
+                    		m('label', {class: 'postBody'}, item.properties.body),
+                    ),
+                    m('img', {class: 'postImage', 'src': item.properties.url}),
+                    m('div', {class: 'postLikeContainer'},
+                    		m('button', {class:'postLikeButton', onclick: function(e) {Profile.likePost(item.key.name)}},
+                    				m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
+                    		),
+                    		m('label', {class: 'postLikeCounter'}, item.properties.likec + " j'aimes"),
+                    ),
+                ])
+            }),
+            m("input", {
+                type: "image",
+                src: "/img/nextArrow.png",
+                class: "postNextButton",
+                onclick: function(e) {
+                    TimeLine.getTimeline()
+                },
+            }),
+        ])
+    },
+    loadTimeline: function() {
+        return m.request({
+            method: "GET",
+            url: "_ah/api/myApi/v1/timeline/"+'?access_token=' + encodeURIComponent(controller.userID)
+        })
+            .then(function(result) {
+                console.log("load_list:",result)
+                TimeLine.list=result.items
+                if ('nextPageToken' in result) {
+                    TimeLine.nextToken= result.nextPageToken
+                } else {
+                    TimeLine.nextToken=""
+                }})
+            .catch(function(e){
+                console.log(e)
+            })
+    },
+    getTimeline: function(){
+        console.log("Call getTimeline");
+        return m.request({
+            method: "GET",
+            url: "_ah/api/myApi/v1/timeline",
+            params: {
+                'next':TimeLine.nextToken,
+                'access_token': encodeURIComponent(controller.userID)
+            }
+        })
+        .then(function(result){
+            console.log("next:",result)
+            if (result.items != null){
+                result.items.map(function(item){TimeLine.list.push(item)})
+            }else{
+                console.log("No post to show");
+            }
 
+            if ('nextPageToken' in result) {
+                TimeLine.nextToken= result.nextPageToken
+            } else {
+                TimeLine.nextToken=""
+            }
+        })
     }
 }
 
+
+var ProfilePage = {
+    view: function(vnode){
+        return [m(Header),m(Profile, {user_url: vnode.attrs.user})]
+    }
+}
+
+var HomePage = {
+    view: function (){
+        return [m(Header),m(Home)]
+    }
+}
+
+var TimeLinePage = {
+    view: function (){
+        return [m(Header),m(TimeLine)]
+    }
+}
+
+var ProfileUpdatePage = {
+    view: function (){
+        return [m(Header),m(ProfileUpdate)]
+    }
+}
 
