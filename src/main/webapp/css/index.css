@@ -48,14 +48,20 @@
 #searchBarTextInput {
 	position: absolute;
 	left: 30%;
-	width: 30%;
+	width: 40%;
 	border: 1px solid #c5c5c5;
 	top: 5px;
  	text-align: center;
+ 	transform: translate(-30px, 0px);
 }
 #searchBarButton {
+	top: 5px;
 	position: absolute;
-	left: 65%;
+	left: 70%;
+	height: 28px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	transform: translate(20px, 0px);
 }
 
 
@@ -67,8 +73,6 @@
 #rightContainer {
 	left: 60%;
 	width: 30%;
-	height: 60%;
-	margin: 0;
 	top: 25%;		
 	position: absolute;
  	background-color: white;
@@ -82,7 +86,8 @@
 	font-size: 55px;
 }
 #rightButton {
-	width: 90%;
+	width: 100%;
+	position: relative;
 	text-align: center;
 	margin-top: 20px;
 	
@@ -90,7 +95,6 @@
 #sign-in-login {
 	position: relative;
 	left: 45%;
-	width: 100%;
 	transform: translate(-25%, 0%);
 }
 

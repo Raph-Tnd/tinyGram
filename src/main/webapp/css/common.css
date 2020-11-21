@@ -15,11 +15,13 @@ body {
 	font-size: 17px;
 	padding: 10px 25px;
 	text-decoration: none;
+    transform: translate(-25px, -10px);
 }
 .buttonSkin:hover {
 	background-color: #E3E3E3;
 }
 .textInputSkin {
+	height: 16px;
  	padding: 5px 30px;
  	font-size: 16px;
  	border-width: 2px;
