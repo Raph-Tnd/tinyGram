@@ -19,8 +19,10 @@
 .profilePicture {
 	position: absolute;
 	width: 150px;
-	height: auto;
+	height: 150px;
+	object-fit: cover;
 	left: 20%;
+	border-radius: 50%;
 }
 #profileFollow {
 	position: relative;
