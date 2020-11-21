@@ -89,6 +89,7 @@ var Profile = {
                 m("h1", {class: 'profileName'}, Profile.name),
                 m("img",{class: "profilePicture", "src":Profile.url}),
                 m("button",{class:"buttonSkin", id: 'profileFollow', onclick: function(e) { Profile.follow()}},"Follow"),
+                m("div", {class: "profilePostSeparator"}),
                 m("div",m(PostView,{profile: Profile}))
             ])
         }
@@ -338,7 +339,7 @@ var SearchBar = {
         [
         m('div',{class:'searchBarForm'},[
         m("input[type=textarea]", {class:'textInputSkin', id: 'searchBarTextInput',
-            placeholder:"Recherche un profile",
+            placeholder:"Rechercher un profil",
             oninput: function(e) { SearchBar.body = e.target.value }}),
         ]),
         m("button[type=submit]", {class:'buttonSkin', id:'searchBarButton'},"Search"),
