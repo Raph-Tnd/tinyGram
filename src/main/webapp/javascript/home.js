@@ -28,13 +28,15 @@ var Home = {
 var Header = {
     view: function(){
         return m('div',{id: 'headerContainer'},[
+                  m('div',{id:'headerLogo'},'TinyGram'),
                   m("button", {class:'buttonSkin', id:'headerDisconnectButton', onclick: function() {
-                                  	controller.disconnectUser();
-                                  }},"Déconnexion"),
-                      m(m.route.Link,{href:"/timeline"},m('img',{id:'headerHomeButton',src:'./img/logo_maison.png'})),
+                	  controller.disconnectUser();
+                  }},"Déconnexion"),
+                      m(m.route.Link,{href:"/timeline", class: 'headerHomeButton'},m('img',{id:'headerHomeButtonImage',src:'./img/logo_maison.png'})
+                  ),
                     
                   m('div',{id:'headerInputContainer'},m(SearchBar)),
-                  m(m.route.Link,{href:"/"},m('div',{id:'headerLogo'},'TinyGram')),])
+         ])
 
     }
 }

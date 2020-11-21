@@ -89,6 +89,7 @@ var Profile = {
                 m("h1", {class: 'profileName'}, Profile.name),
                 m("img",{class: "profilePicture", "src":Profile.url}),
                 m("button",{class:"buttonSkin", id: 'profileFollow', onclick: function(e) { Profile.follow()}},"Follow"),
+                m("div", {class: "profilePostSeparator"}),
                 m("div",m(PostView,{profile: Profile}))
             ])
         }
@@ -309,7 +310,7 @@ var PostView = {
                         ),
                         m('img', {class: 'postImage', 'src': item.properties.url}),
                         m('div', {class: 'postLikeContainer'},
-                            m('button', {class:'buttonSkin', onclick: function(e) {Profile.likePost(item.key.name)}},
+                            m('button', {class:'postLikeButton', onclick: function(e) {Profile.likePost(item.key.name)}},
                                     m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
                             ),
                             m('label', {class: 'postLikeCounter'}, item.properties.likec + " j'aimes"),
@@ -338,7 +339,7 @@ var SearchBar = {
         [
         m('div',{class:'searchBarForm'},[
         m("input[type=textarea]", {class:'textInputSkin', id: 'searchBarTextInput',
-            placeholder:"Recherche un profile",
+            placeholder:"Rechercher un profil",
             oninput: function(e) { SearchBar.body = e.target.value }}),
         ]),
         m("button[type=submit]", {class:'buttonSkin', id:'searchBarButton'},"Search"),
@@ -360,20 +361,22 @@ var TimeLine = {
             m('div',{class:'subtitle'}),
             TimeLine.list.map(function(item) {
                 return m('div', {class:'postContainer'}, [
-                    m('div', {class: 'likeDiv'},
-                        m('button', {class:'likeButton', onclick: function(e){Profile.likePost(item.key.name)}},"like"),
-                        m('label', {class: 'likeCounter'}, item.properties.likec + " j'aimes"),
+                    m('div', {class: 'postBodyContainer'},
+                    		m('label', {class: 'postBody'}, item.properties.body),
                     ),
-                    m('div', {class: 'bodyDiv'},
-                        m('label', {class: 'bodyPost'}, item.properties.body),
+                    m('img', {class: 'postImage', 'src': item.properties.url}),
+                    m('div', {class: 'postLikeContainer'},
+                    		m('button', {class:'postLikeButton', onclick: function(e) {Profile.likePost(item.key.name)}},
+                    				m('img', {class: 'postLikeButtonImage', src:"img/like.png"})
+                    		),
+                    		m('label', {class: 'postLikeCounter'}, item.properties.likec + " j'aimes"),
                     ),
-                    m('img', {class: 'imagePost', 'src': item.properties.url}),
                 ])
             }),
             m("input", {
                 type: "image",
                 src: "/img/nextArrow.png",
-                class: "nextButton",
+                class: "postNextButton",
                 onclick: function(e) {
                     TimeLine.getTimeline()
                 },
