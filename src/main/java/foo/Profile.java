@@ -7,20 +7,30 @@ import com.google.appengine.api.datastore.Entity;
 
 
 public class Profile {
-	
-    private String name;
-    private String email;
-    private String url;
-    private String description;
-    private Set<String> follows;
-    private Set<String> followers;
+    public String name;
+    public String accountName;
+    public String email;
+    public String url;
+    public String description;
+    public Set<String> follows;
+    public Set<String> followers;
     public final static String URL_IMAGE = "/img/hotface.png";
 
-    public Profile(){ }
+    public Profile(){
+        this.email = null;
+        this.accountName = null;
+        this.description = null;
+        this.name = null;
+        this.url = null;
+        this.follows = null;
+        this.followers = null;
+    }
 
     public Profile(String email){
         this.email = email;
-        this.name = this.emailToUniqueName();
+        this.accountName = this.emailToUniqueName();
+        this.description = "";
+        this.name = this.accountName;
         this.url = URL_IMAGE;
         this.follows = new HashSet<>();
         this.followers = new HashSet<>();
@@ -37,7 +47,8 @@ public class Profile {
 
     public Entity createEntity(){
         Entity e = new Entity("Profile",this.emailToUniqueName());
-        e.setProperty("name" , this.name);
+        e.setProperty("accountName" , this.accountName);
+        e.setProperty("name", this.name);
         e.setProperty("email", this.email);
         e.setProperty("url",this.url);
         e.setProperty("description",this.description);
@@ -46,23 +57,4 @@ public class Profile {
         return e;
     }
 
-    public String getName(){
-        return name;
-    }
-
-    public String getEmail(){
-        return email;
-    }
-
-    public String getUrl(){
-        return url;
-    }
-
-    public String getDescription(){
-        return description;
-    }
-
-    public Set<String> getFollowers(){
-        return followers;
-    }
 }

@@ -1,6 +1,8 @@
 function entityToProfile(entity){
     Profile.email = entity.properties.email;
     Profile.name = entity.properties.name;
+    Profile.accountName = entity.properties.accountName;
+    Profile.description = entity.properties.description;
     Profile.url = entity.properties.url;
 }
 
@@ -19,7 +21,6 @@ var controller = {
         //if user already signed in, redirect automatically
         if (controller.authInstance.isSignedIn.get()){
             controller.loadGoogleUser();
-            //controller.redirectTo("/profile/"+Profile.name);
         }
     },
     loadGoogleUser: function(){
@@ -66,27 +67,30 @@ var controller = {
 
 var Profile = {
     name:"",
+    accountName:"",
+    description:"",
     email:"",
-    ID:"",
     url:"",
     nextToken:"",
     userIsProfile:false,
     list:[],
     view: function(vnode){
-        if(Profile.name ==""){
-            Profile.loadProfile(vnode.attrs.name);
+        if(Profile.accountName ==""){
+            Profile.loadProfile(vnode.attrs.user_url);
         }
         if(Profile.userIsProfile){
             return m('div', {class:'profileContainer'}, [
                 m("h1", {class: 'profileName'}, Profile.name),
+                m("h2", {class: 'profileName'}, Profile.description),
                 m("img",{class: "profilePicture", "src":Profile.url}),
-                //m("button",{class:"button", onclick: function(e) { Profile.loadList()}},"Msgs"),
+                m(m.route.Link,{href:"/profile/"+Profile.accountName+"/update"},m('button',{class:'buttonSkin'},"updateProfile")),
                 m(PostForm),
                 m("div",m(PostView,{profile: Profile}))
             ])
         }else{
             return m('div', {class:'profileContainer'}, [
                 m("h1", {class: 'profileName'}, Profile.name),
+                m("h2", {class: 'profileName'}, Profile.description),
                 m("img",{class: "profilePicture", "src":Profile.url}),
                 m("button",{class:"buttonSkin", id: 'profileFollow', onclick: function(e) { Profile.follow()}},"Follow"),
                 m("div", {class: "profilePostSeparator"}),
@@ -98,7 +102,7 @@ var Profile = {
     loadList: function() {
         return m.request({
             method: "GET",
-            url: "_ah/api/myApi/v1/profile/"+Profile.name+"/post"+'?access_token=' + encodeURIComponent(controller.userID)
+            url: "_ah/api/myApi/v1/profile/"+Profile.accountName+"/post"+'?access_token=' + encodeURIComponent(controller.userID)
         })
         .then(function(result) {
             console.log("load_list:",result)
@@ -115,7 +119,7 @@ var Profile = {
     next: function() {
         return m.request({
             method: "GET",
-            url: "_ah/api/myApi/v1/profile/"+Profile.name+"/post",
+            url: "_ah/api/myApi/v1/profile/"+Profile.accountName+"/post",
             params: {
                 'next':Profile.nextToken,
                 'access_token': encodeURIComponent(controller.userID)
@@ -137,7 +141,8 @@ var Profile = {
     },
     postMessage: function(desc,url) {
         var data={'url': url,
-            'body': desc}
+            'body': desc
+        }
         return m.request({
             method: "POST",
             url: "_ah/api/myApi/v1/postMsg"+'?access_token='+encodeURIComponent(controller.userID),
@@ -168,7 +173,7 @@ var Profile = {
     likePost: function(name) {
         return m.request({
             method: "POST",
-            url: "_ah/api/myApi/v1/likePost/"+name+'?access_token='+encodeURIComponent(Profile.ID)
+            url: "_ah/api/myApi/v1/likePost/"+name+'?access_token='+encodeURIComponent(controller.userID)
         })
         .then(function(result) {
             console.log("like:",result);
@@ -237,7 +242,7 @@ var Profile = {
         }
         return m.request({
             method: "POST",
-            url: "_ah/api/myApi/v1/profile/"+Profile.name+"/follow"+'?access_token='+encodeURIComponent(controller.userID),
+            url: "_ah/api/myApi/v1/profile/"+Profile.accountName+"/follow"+'?access_token='+encodeURIComponent(controller.userID),
         })
         .then(function(result){
             console.log("Followed "+result.properties.name);
@@ -246,6 +251,26 @@ var Profile = {
             console.log(e.messages);
         })
     },
+    updateProfile: function(name,url, desc){
+        console.log("Call update profile");
+        var data = { 'name': name,
+            'url': url,
+            'description' : desc
+        }
+        console.log(data);
+        return m.request({
+            method: "PUT",
+            url: "_ah/api/myApi/v1/profile/"+Profile.accountName+"/update"+'?access_token='+encodeURIComponent(controller.userID),
+            params: data,
+        })
+        .then(function (result){
+            console.log("updated to " + result );
+            Profile.loadProfile(Profile.accountName);
+        })
+        .catch(function (e){
+            console.log(e)
+        })
+    }
 }
 
 var PostForm = {
@@ -255,7 +280,7 @@ var PostForm = {
         return m("form", {
         	class:'formContainer',
             onsubmit: function(e) {
-                if (this.url =="") {return ;}
+                if (PostForm.url =="") {return ;}
                 Profile.postMessage(PostForm.body,PostForm.url)
             }
         },
@@ -330,6 +355,68 @@ var PostView = {
     }
 }
 
+var ProfileUpdate = {
+    name:"",
+    url:"",
+    desc:"",
+    view: function() {
+        return m('div',[
+            m('form',{
+                class: 'formContainer',
+                onsubmit: function (e){
+                    if (ProfileUpdate.name == ""){return ;}
+                    Profile.updateProfile(ProfileUpdate.name, "null", "null",);
+                }
+            },
+            [
+                m('div',[
+                    m('div',{class:'control'}, m("input[type=text]", {
+                        class: 'textInputSkin',
+                        id:'formInput',
+                        placeholder:"new Name",
+                        oninput: function(e) {ProfileUpdate.name = e.target.value}})),
+                ]),
+                m('div',{class:'control'},m("button[type=submit]", {class:'buttonSkin', id:'postButton'},"Change name"))
+            ]),
+            m('form',{
+                class: 'formContainer',
+                onsubmit: function (e){
+                    if (ProfileUpdate.url == ""){return ;}
+                    Profile.updateProfile("null",ProfileUpdate.url, "null",);
+                }
+            },
+            [
+                m('div',[
+                    m('div',{class:'control'}, m("input[type=text]", {
+                        class: 'textInputSkin',
+                        id:'formInput',
+                        placeholder:"URL",
+                        oninput: function(e) {ProfileUpdate.url = e.target.value}})),
+                ]),
+                m('div',{class:'control'},m("button[type=submit]", {class:'buttonSkin', id:'postButton'},"Change Image"))
+            ]),
+            m('form',{
+                class: 'formContainer',
+                onsubmit: function (e){
+                    Profile.updateProfile("null","null", ProfileUpdate.desc);
+                }
+            },
+            [
+                m('div',[
+                    m('div',{class:'control'}, m("input[type=text]", {
+                        class: 'textInputSkin',
+                        id:'formInput',
+                        placeholder:"description",
+                        oninput: function(e) {ProfileUpdate.desc = e.target.value}})),
+                ]),
+                m('div',{class:'control'},m("button[type=submit]", {class:'buttonSkin', id:'postButton'},"Change Description"))
+            ])
+
+        ])
+
+    }
+}
+
 var SearchBar = {
     body:"",
     view:function(){
@@ -345,12 +432,6 @@ var SearchBar = {
         m("button[type=submit]", {class:'buttonSkin', id:'searchBarButton'},"Search"),
     ])
     }
-}
-
-var FriendsList = {
-	view: function() {
-		return m(FriendsListView)
-	}
 }
 
 var TimeLine = {
@@ -427,9 +508,10 @@ var TimeLine = {
     }
 }
 
+
 var ProfilePage = {
     view: function(vnode){
-        return [m(Header),m(Profile, {name: vnode.attrs.user})]
+        return [m(Header),m(Profile, {user_url: vnode.attrs.user})]
     }
 }
 
@@ -442,6 +524,12 @@ var HomePage = {
 var TimeLinePage = {
     view: function (){
         return [m(Header),m(TimeLine)]
+    }
+}
+
+var ProfileUpdatePage = {
+    view: function (){
+        return [m(Header),m(ProfileUpdate)]
     }
 }
 

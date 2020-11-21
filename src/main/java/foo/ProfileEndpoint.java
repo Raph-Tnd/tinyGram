@@ -11,6 +11,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import endpoints.repackaged.com.google.api.Http;
 import io.swagger.annotations.ApiParam;
 
 import java.util.Date;
@@ -77,23 +78,12 @@ public class ProfileEndpoint {
         }
 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        /*Query q1 = new Query("Profile")
-                .setFilter(new FilterPredicate("name", FilterOperator.EQUAL, profileName));
-        PreparedQuery pq1 = ds.prepare(q1);
-        Entity profileToFollow = pq1.asSingleEntity();
-
-        Query q2 = new Query("Profile")
-                .setFilter(new FilterPredicate("name", FilterOperator.EQUAL, userName));
-        PreparedQuery pq2 = ds.prepare(q2);
-        Entity profileFollowing = pq2.asSingleEntity();
-
-         */
         Entity profileToFollow = ds.get(new Entity("Profile",profileName).getKey());
         Entity profileFollowing = ds.get(new Entity("Profile", userName).getKey());
 
         //adding user to profile's followers
         Object items1 = profileToFollow.getProperty("followers");
-        String toPut = (String)profileFollowing.getProperty("name");
+        String toPut = (String)profileFollowing.getProperty("accountName");
         Collection<String> res1;
         if(items1 == null){
             res1 = new HashSet<String>();
@@ -108,10 +98,9 @@ public class ProfileEndpoint {
 
         profileToFollow.setProperty("followers", res1);
 
-
         //adding profile to user's follows
         Object items2 = profileFollowing.getProperty("follows");
-        toPut = (String)profileToFollow.getProperty("name");
+        toPut = (String)profileToFollow.getProperty("accountName");
         Collection<String> res2;
         if(items2 == null){
             res2 = new HashSet<String>();
@@ -132,4 +121,38 @@ public class ProfileEndpoint {
 
         return profileToFollow;
     }
+
+    @ApiMethod(name = "updateProfile", path = "profile/{profileName}/update/", httpMethod = HttpMethod.PUT)
+    public Entity updateProfile(User user, Profile updatedProfile) throws UnauthorizedException, EntityNotFoundException {
+        if (user == null){
+            throw new UnauthorizedException("Invalid credentials");
+        }
+        String userName = user.getEmail().split("@")[0];
+
+        if ( userName == updatedProfile.accountName){
+            throw new UnauthorizedException("Can only update yourself");
+        }
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+        Key profileKey = KeyFactory.createKey("Profile",user.getEmail().split("@")[0]);
+        Entity profile = ds.get(profileKey);
+
+        if(!updatedProfile.url.equals("null")){
+            profile.setProperty("url", updatedProfile.url);
+        }
+
+        if(!updatedProfile.description.equals("null")){
+            profile.setProperty("description",updatedProfile.description);
+        }
+
+        if(!updatedProfile.name.equals("null")){
+            profile.setProperty("name", updatedProfile.name);
+        }
+
+        Transaction txn = ds.beginTransaction();
+        ds.put(profile);
+        txn.commit();
+
+        return profile;
+    }
+
 }
