@@ -11,6 +11,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import endpoints.repackaged.com.google.api.Http;
 import io.swagger.annotations.ApiParam;
 
 import java.util.Date;
@@ -97,7 +98,6 @@ public class ProfileEndpoint {
 
         profileToFollow.setProperty("followers", res1);
 
-
         //adding profile to user's follows
         Object items2 = profileFollowing.getProperty("follows");
         toPut = (String)profileToFollow.getProperty("accountName");
@@ -121,4 +121,38 @@ public class ProfileEndpoint {
 
         return profileToFollow;
     }
+
+    @ApiMethod(name = "updateProfile", path = "profile/{profileName}/update/", httpMethod = HttpMethod.PUT)
+    public Entity updateProfile(User user, Profile updatedProfile) throws UnauthorizedException, EntityNotFoundException {
+        if (user == null){
+            throw new UnauthorizedException("Invalid credentials");
+        }
+        String userName = user.getEmail().split("@")[0];
+
+        if ( userName == updatedProfile.accountName){
+            throw new UnauthorizedException("Can only update yourself");
+        }
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+        Key profileKey = KeyFactory.createKey("Profile",user.getEmail().split("@")[0]);
+        Entity profile = ds.get(profileKey);
+
+        if(!updatedProfile.url.equals("null")){
+            profile.setProperty("url", updatedProfile.url);
+        }
+
+        if(!updatedProfile.description.equals("null")){
+            profile.setProperty("description",updatedProfile.description);
+        }
+
+        if(!updatedProfile.name.equals("null")){
+            profile.setProperty("name", updatedProfile.name);
+        }
+
+        Transaction txn = ds.beginTransaction();
+        ds.put(profile);
+        txn.commit();
+
+        return profile;
+    }
+
 }

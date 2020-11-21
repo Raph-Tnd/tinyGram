@@ -58,5 +58,5 @@ m.route(document.body, "/",{
 	"/": HomePage,
 	"/timeline": TimeLinePage,
 	"/profile/:user": ProfilePage,
-	"/profile/:user/friends": FriendsList
+	"/profile/:user/update": ProfileUpdatePage
 })
