@@ -1,34 +1,58 @@
+/*------body-------*/
+.bodyContainer {
+    position: relative;
+	width: 50%;
+	left: 25%;
+}
+
+
 /*---------Profile---------*/
+
 .profileContainer {
     position: relative;
-	width: 90%;
-	left: 10%;
+
 }
 .profilePostSeparator {
 	position: relative;
-	width: 90%;
+	width: 80%;
+	left: 10%;
 	border-top: 1px solid black;
-	margin-bottom: 10px;
+	margin-top:30px;
+	margin-bottom: 30px;
 }
 .profileName {
+	position: relative;
+	left: 30%;
+	top: 60px;
+	font-size: 25px;
+}
+.profileDescription {
+	position: relative;
+	left: 30%;
+	top: 80px;
+	width: 40%;
+	height: 48px ;
+	font-size: 14px;
+    font-weight: normal;
+    overflow: hidden;
+}
+#profileModification {
 	position: absolute;
-	left: 35%;
-	top: 50px;
-	font-size: 20px;
+	left: 80%;
+	top:60%
+
 }
 .profilePicture {
-	position: absolute;
+	position: relative;
 	width: 150px;
 	height: 150px;
 	object-fit: cover;
-	left: 20%;
 	border-radius: 50%;
 }
 #profileFollow {
-	position: relative;
-	left: 60%;
-	margin-top: 50px;
-	margin-bottom: 5%;
+	position: absolute;
+	top: 60%;
+	left: 90%;
 }
 
 
@@ -36,89 +60,126 @@
 /*---------Form---------*/
 .formContainer {
 	position: relative;
-	left: 60%;
-	top: 10px;
-	margin-bottom: 80px;
-	width: 50%;
+	height: 100px;
 }
-.formInput {
+#formInput {
 	position: relative;
-	width: 100%;
- 	text-align: left;
+	left: 20%;
 }
-
+#formButton{
+    position: absolute;
+    left: 75%;
+    top: 10%
+}
 
 
 
 /*---------Post---------*/
-.postContainer {
-	position: relative;
-	margin-top: 10px;
-}
+
 .postNextButton {
 	position: relative;
 	max-width: 50px;
-	left: 45%;
+	left: 50%;
 	transform: translate(-50%, 0%);
 }
 .postDeleteButton {
 	border: 0px solid black;
 	background: white;
 	position: absolute;
-	top: 20px;
+	top: 10px;
 	z-index: 1;
 }
 .postDeleteButtonImage {
-	width: 15px;
+	width: 30px;
 	height: auto;
 }
 
 .postContainer {
-	height: 30%;
+	position: relative;
+	overflow:hidden;
+	margin-top: 20px;
+	height: 440px;
 	background-color: white;
 	padding-left: 10px;
-	padding-top: 5px;
+	padding-top: 10px;
+	border:1px
 }
 .postBodyContainer {
 	position: absolute;
 	text-align: justify;
-	left: 22%;
-	margin-right: 20px;
+	left: 475px;
+	font-size:30px;
+	overflow: hidden;
+	top: 25px;
 }
 .postImage {
-	width: 20%;
-	max-height: 30%;	
+    object-fit: cover;
+	height:430px;
+	max-width: 430px;
 }
 /*like*/
 .postLikeContainer {
-	position: relative;
+	position: absolute;
+	margin-top:-60px;
+	width:500px;
+	left:470px;
 	height: 40px;
 	overflow: hidden;
+	font-size: 20px;
 }
 .postLikeButton {
 	z-index: 1;
 	position: absolute;
-	background-color: white;
 	border-style: none;
+	outline: none;
+	margin-right: 10px;
+	background-color: white;
+
 }
 .postLikeButtonImage {
 	position: relative;
-	width: 30px;
+	width: 45px;
 	height: auto;
 }
 .postLikeButtonImage:hover {
 	margin-left: -5px;
 	margin-top: -5px;
-	width: 40px;
+	width: 55px;
 }
 .postLikeCounter {
 	top: 50%;
 	transform: translate(0%, -50%);
 	font-weight: bold;
-	left: 60px;
+	left: 80px;
 	display: block;
 	position: absolute;
 }
+
+
+
+/* modification */
+.modificationContainerTotal{
+    margin-top: 60px;
+}
+.modificationContainer{
+    width: 100%;
+}
+#modificationButton {
+    position: relative;
+    left: 50%;
+    transform:translate(-50%,0%);
+    margin-bottom: 70px;
+}
+#modificationInput {
+    position: relative;
+    left: 50%;
+    transform:translate(-50%,0%);
+    margin-bottom:20px;
+}
+
+
+
+
 
 /*button timeline*/
 .nextButton {
