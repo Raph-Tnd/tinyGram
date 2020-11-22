@@ -111,8 +111,6 @@ public class PostEndpoint {
 		e.setProperty("owner", user.getEmail().split("@")[0]);
 		e.setProperty("url", pm.url);
 		e.setProperty("body", pm.body);
-		e.setProperty("likec", 0);
-		e.setProperty("likel", new HashSet<String>() );
 		e.setProperty("date", new Date() );
 ///		Solution pour pas projeter les listes
 //		Entity pi = new Entity("PostIndex", e.getKey());
@@ -137,44 +135,5 @@ public class PostEndpoint {
 		ds.delete(toRemove);
 		return post;
 	}
-  
-	@ApiMethod(name = "likePost", path = "likePost/{keyPost}",httpMethod = HttpMethod.POST)
-	public Entity likePost(User user, @Named("keyPost") String keyPost) throws UnauthorizedException, EntityNotFoundException {
-		if (user == null) {
-			throw new UnauthorizedException("Invalid credentials");
-		}
 
-		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-		Key keypost = new Entity("Post",keyPost).getKey();
-		Entity post = ds.get(keypost);
-
-
-		Collection<String> listLike ;
-		Object precastList = post.getProperty("likel");
-		if ( precastList == null ) {
-			listLike = new HashSet<String>();
-		} else {
-			listLike = (List<String>)precastList;
-		}
-
-		long nbLike = (long) post.getProperty("likec");
-
-		String userLiking = user.getEmail().split("@")[0];
-
-		if (listLike.contains(userLiking)) {
-			listLike.remove(userLiking);
-			nbLike -= 1;
-		} else {
-			listLike.add(userLiking);
-			nbLike += 1;
-		}
-
-		Transaction txn = ds.beginTransaction();
-		post.setProperty("likel", listLike);
-		post.setProperty("likec", nbLike);
-		ds.put(post);
-		txn.commit();
-
-		return post;
-	}
 }
