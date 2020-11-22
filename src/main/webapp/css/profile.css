@@ -1,45 +1,58 @@
-/*---------Profile---------*/
-.profileContainer {
+/*------body-------*/
+.bodyContainer {
     position: relative;
 	width: 50%;
 	left: 25%;
 }
+
+
+/*---------Profile---------*/
+
+.profileContainer {
+    position: relative;
+
+}
 .profilePostSeparator {
 	position: relative;
-	width: 90%;
+	width: 80%;
+	left: 10%;
 	border-top: 1px solid black;
-	margin-bottom: 10px;
+	margin-top:30px;
+	margin-bottom: 30px;
 }
 .profileName {
-	position: absolute;
-	left: 35%;
-	top: 50px;
-	font-size: 20px;
+	position: relative;
+	left: 30%;
+	top: 60px;
+	font-size: 25px;
 }
 .profileDescription {
-	position: absolute;
-	left: 35%;
+	position: relative;
+	left: 30%;
 	top: 80px;
-	font-size: 12px;
+	width: 40%;
+	height: 48px ;
+	font-size: 14px;
     font-weight: normal;
+    overflow: hidden;
 }
 #profileModification {
-    position: absolute;
-    top: 80px;
+	position: absolute;
+	left: 80%;
+	top:60%
+
 }
 .profilePicture {
-	position: absolute;
+	position: relative;
 	width: 150px;
 	height: 150px;
 	object-fit: cover;
-	left: 20%;
 	border-radius: 50%;
 }
 #profileFollow {
-	position: relative;
-	left: 60%;
-	margin-top: 50px;
-	margin-bottom: 5%;
+	position: absolute;
+	top: 60%;
+	left: 90%;
 }
 
 
@@ -47,17 +60,17 @@
 /*---------Form---------*/
 .formContainer {
 	position: relative;
-	left: 60%;
-	top: 10px;
-	margin-bottom: 80px;
-	width: 50%;
+	height: 100px;
 }
-.formInput {
+#formInput {
 	position: relative;
-	width: 100%;
- 	text-align: left;
+	left: 20%;
 }
-
+#formButton{
+    position: absolute;
+    left: 75%;
+    top: 10%
+}
 
 
 
@@ -66,7 +79,7 @@
 .postNextButton {
 	position: relative;
 	max-width: 50px;
-	left: 45%;
+	left: 50%;
 	transform: translate(-50%, 0%);
 }
 .postDeleteButton {
@@ -95,8 +108,9 @@
 	position: absolute;
 	text-align: justify;
 	left: 475px;
-	margin-right: 20px;
-	font-size:40px
+	font-size:30px;
+	overflow: hidden;
+	top: 25px;
 }
 .postImage {
     object-fit: cover;
@@ -119,7 +133,7 @@
 	border-style: none;
 	outline: none;
 	margin-right: 10px;
-		background-color: white;
+	background-color: white;
 
 }
 .postLikeButtonImage {
