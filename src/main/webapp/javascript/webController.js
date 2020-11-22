@@ -73,7 +73,8 @@ var Profile = {
     url:"",
     nextToken:"",
     userIsProfile:false,
-    list:[],
+    listPost:[],
+    listLike:[],
     view: function(vnode){
         if(Profile.accountName ==""){
             Profile.loadProfile(vnode.attrs.user_url);
@@ -111,7 +112,10 @@ var Profile = {
         })
         .then(function(result) {
             console.log("load_list:",result)
-            Profile.list=result.items
+            Profile.listPost=result.items;
+            Profile.listPost.map(function(item){
+                Profile.loadLike(item.key.name);
+            })
             if ('nextPageToken' in result) {
                 Profile.nextToken= result.nextPageToken
             } else {
@@ -133,7 +137,10 @@ var Profile = {
         .then(function(result) {
             console.log("next:",result)
             if (result.items != null){
-                result.items.map(function(item){Profile.list.push(item)})
+                result.items.map(function(item){
+                    Profile.listPost.push(item);
+                    Profile.loadLike(item.key.name);
+                })
             }else{
                 console.log("No post to show");
             }
@@ -144,7 +151,19 @@ var Profile = {
             }
         })
     },
+    loadLike: function(postKey){
+        console.log("loadLike")
+        return m.request({
+            method: "GET",
+            url: "_ah/api/myApi/v1/getLike/"+postKey,
+        })
+        .then(function(result){
+            console.log(result);
+            Profile.listLike.push(result)
+        })
+    },
     postMessage: function(desc,url) {
+        console.log( "postMessage")
         var data={'url': url,
             'body': desc
         }
@@ -155,10 +174,22 @@ var Profile = {
         })
         .then(function(result) {
             console.log("post_message:",result)
-            Profile.loadList();
+            Profile.createLikePost(result.key.name);
         })
         .catch(function(e){
             console.log(e)
+        })
+    },
+    createLikePost: function(key){
+        console.log( "Create like post")
+        console.log(key)
+        return m.request({
+            method: "POST",
+            url: "_ah/api/myApi/v1/createPostLike/"+key+'?access_token='+encodeURIComponent(controller.userID),
+        })
+        .then(function(result){
+            console.log(result);
+            Profile.loadList();
         })
     },
     deleteMessage: function(name) {
@@ -168,29 +199,43 @@ var Profile = {
         })
         .then(function(result) {
             console.log("delete:",result)
-            //deleting from view
-            Profile.list.splice(Profile.list.indexOf(result),1)
+            Profile.deleteLikePost(result.key.name);
         })
         .catch(function(e) {
             console.log(e.message)
         })
     },
-    likePost: function(name) {
+    deleteLikePost: function(key){
         return m.request({
-            method: "POST",
-            url: "_ah/api/myApi/v1/likePost/"+name+'?access_token='+encodeURIComponent(controller.userID)
+            method: "DELETE",
+            url: "_ah/api/myApi/v1/deleteLike/"+key+'?access_token='+encodeURIComponent(controller.userID),
+        })
+        .then(function(result){
+            console.log(result);
+            //deleting from view
+            Profile.listPost.splice(Profile.listPost.indexOf(result),1);
+        })
+    },
+    likePost: function(key) {
+        console.log("likePost")
+        console.log(key)
+        return m.request({
+            method: "PUT",
+            url: "_ah/api/myApi/v1/likePost/"+key+'?access_token='+encodeURIComponent(controller.userID)
         })
         .then(function(result) {
             console.log("like:",result);
             //updating like from view
             let i = -1;
-            Profile.list.map(function(item){
-                if(item.properties.date == result.properties.date){
-                     i = Profile.list.indexOf(item);
+            Profile.listPost.map(function(item,index){
+                if(item.key.name == result.properties.key){
+                     i = index;
                 }
             });
-            Profile.list.splice(i,1,result);
+            Profile.listLike.splice(i,1,result);
             //PostView.redraw();
+
+
         })
         .catch(function(e) {
             console.log(e.message)
@@ -319,12 +364,12 @@ var PostView = {
                 }
             }else {
                 buttonState = 'img/unliked.png';
-            };
+            }
             return buttonState;
         },
         view: function(vnode) {
             return m('div', [
-                vnode.attrs.profile.list.map(function(item) {
+                vnode.attrs.profile.listPost.map(function(item,index) {
                     if (vnode.attrs.profile.userIsProfile){
                         return m('div', {class:'postContainer'}, [
 
@@ -343,8 +388,7 @@ var PostView = {
                                 m('button', {class: 'postLikeButton', onclick: function(e) {Profile.likePost(item.key.name)}},
                                         m('img', {class: 'postLikeButtonImage', src:PostView.isLiked(item)})
                                 ),
-
-                                m('label', {class: 'postLikeCounter'}, item.properties.likec+ " likes"),
+                                m('label', {class: 'postLikeCounter'}, vnode.attrs.profile.listLike[index].properties.likec+ " like"),
                             ),
                         ])
                     }else{
@@ -357,7 +401,7 @@ var PostView = {
                                 m('button', {class: 'postLikeButton', onclick: function(e) {Profile.likePost(item.key.name)}},
                                         m('img', {class: 'postLikeButtonImage', src:PostView.isLiked(item)})
                                 ),
-                                m('label', {class: 'postLikeCounter'}, item.properties.likec + " likes"),
+                                m('label', {class: 'postLikeCounter'}, Profile.listLike[index].properties.likec + " like"),
                             ),
                         ])
                     }
@@ -455,10 +499,11 @@ var SearchBar = {
 
 var TimeLine = {
     nextToken:"",
-    list: [],
-    view: function(){
-        return m('div',{class:'bodyContainer'}, [
-            TimeLine.list.map(function(item) {
+    listPost: [],
+    listLike: [],
+    view: function(vnode){
+        return m('div', [
+            TimeLine.listPost.map(function(item, index) {
                 return m('div', {class:'postContainer'}, [
                     m('div', {class: 'postBodyContainer'},
                     		m('label', {class: 'postBody'}, item.properties.body),
@@ -468,7 +513,7 @@ var TimeLine = {
                     		m('button', {class:'postLikeButton', onclick: function(e) {Profile.likePost(item.key.name)}},
                     				m('img', {class: 'postLikeButtonImage', src:PostView.isLiked(item)})
                     		),
-                    		m('label', {class: 'postLikeCounter'}, item.properties.likec + " like"),
+                    		m('label', {class: 'postLikeCounter'}, TimeLine.listLike[index].properties.likec + " like"),
                     ),
                 ])
             }),
@@ -489,7 +534,7 @@ var TimeLine = {
         })
             .then(function(result) {
                 console.log("load_list:",result)
-                TimeLine.list=result.items
+                TimeLine.listPost=result.items
                 if ('nextPageToken' in result) {
                     TimeLine.nextToken= result.nextPageToken
                 } else {
@@ -512,7 +557,10 @@ var TimeLine = {
         .then(function(result){
             console.log("next:",result)
             if (result.items != null){
-                result.items.map(function(item){TimeLine.list.push(item)})
+                result.items.map(function(item){
+                    TimeLine.listPost.push(item);
+                    TimeLine.loadLike(item.key.name);
+                })
             }else{
                 console.log("No post to show");
             }
@@ -523,7 +571,18 @@ var TimeLine = {
                 TimeLine.nextToken=""
             }
         })
-    }
+    },
+    loadLike: function(postKey){
+        console.log("loadLike")
+        return m.request({
+            method: "GET",
+            url: "_ah/api/myApi/v1/getLike/"+postKey,
+        })
+            .then(function(result){
+                console.log(result);
+                TimeLine.listLike.push(result)
+            })
+    },
 }
 
 
