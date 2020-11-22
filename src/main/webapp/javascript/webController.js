@@ -502,7 +502,7 @@ var TimeLine = {
     listPost: [],
     listLike: [],
     view: function(vnode){
-        return m('div', [
+        return m('div', {class:'bodyContainer'},[
             TimeLine.listPost.map(function(item, index) {
                 return m('div', {class:'postContainer'}, [
                     m('div', {class: 'postBodyContainer'},

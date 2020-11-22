@@ -1,6 +1,6 @@
 /*------body-------*/
 .bodyContainer {
-    position: relative;
+	position: relative;
 	width: 50%;
 	left: 25%;
 }
@@ -9,7 +9,7 @@
 /*---------Profile---------*/
 
 .profileContainer {
-    position: relative;
+	position: relative;
 
 }
 .profilePostSeparator {
@@ -33,8 +33,8 @@
 	width: 40%;
 	height: 48px ;
 	font-size: 14px;
-    font-weight: normal;
-    overflow: hidden;
+	font-weight: normal;
+	overflow: hidden;
 }
 #profileModification {
 	position: absolute;
@@ -67,9 +67,9 @@
 	left: 20%;
 }
 #formButton{
-    position: absolute;
-    left: 75%;
-    top: 10%
+	position: absolute;
+	left: 75%;
+	top: 10%
 }
 
 
@@ -113,9 +113,9 @@
 	top: 25px;
 }
 .postImage {
-    object-fit: cover;
+	object-fit: cover;
 	height:430px;
-	max-width: 430px;
+	width: 430px;
 }
 /*like*/
 .postLikeContainer {
@@ -159,22 +159,22 @@
 
 /* modification */
 .modificationContainerTotal{
-    margin-top: 60px;
+	margin-top: 60px;
 }
 .modificationContainer{
-    width: 100%;
+	width: 100%;
 }
 #modificationButton {
-    position: relative;
-    left: 50%;
-    transform:translate(-50%,0%);
-    margin-bottom: 70px;
+	position: relative;
+	left: 50%;
+	transform:translate(-50%,0%);
+	margin-bottom: 70px;
 }
 #modificationInput {
-    position: relative;
-    left: 50%;
-    transform:translate(-50%,0%);
-    margin-bottom:20px;
+	position: relative;
+	left: 50%;
+	transform:translate(-50%,0%);
+	margin-bottom:20px;
 }
 
 
