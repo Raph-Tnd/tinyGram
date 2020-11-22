@@ -1,12 +1,4 @@
-<<<<<<< HEAD
 
-=======
-var HomePage = {
-    view: function (){
-        return [m(Home),m(Header)]
-    }
-}
->>>>>>> 6ea066e... ajout pageabonnements init
 var Home = {
     oncreate: function(){
         console.log("Calling render");
@@ -28,6 +20,7 @@ var Home = {
             m('div', {class:'signatureContainer'},[
                 m.trust('<p>' +
                     'Louis NORMAND, Raphaël TENAUD, Sylvain BEAUDOIN, Thibault COLIN  -Web & Cloud-</p>'),
+
                 ]),
         ])
     }

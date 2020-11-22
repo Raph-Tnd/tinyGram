@@ -60,3 +60,4 @@ m.route(document.body, "/",{
 	"/profile/:user/update": ProfileUpdatePage
 })
 
+
