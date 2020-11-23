@@ -238,6 +238,7 @@ var Profile = {
             });
             Profile.listLike.splice(i,1,result.properties.likec);
             PostView.isLiked(result.properties.key,i);
+            TimeLine.isLiked(result.properties.key,i);
             //PostView.redraw();
         })
         .catch(function(e) {
@@ -394,16 +395,7 @@ var PostView = {
             }
             PostView.listLiked.splice(index,1,buttonState);
         })
-            /*if (temp.properties.likel != null) {
-                if( temp.properties.likel.includes(emailToUniqueName(controller.currentUser.getBasicProfile().getEmail())) ) {
-                    buttonState = 'img/liked.png';
-                }
-            }else {
-                buttonState = 'img/unliked.png';
-            }
-            return buttonState;
 
-             */
         },
         view: function(vnode) {
             return m('div', [
@@ -543,6 +535,43 @@ var TimeLine = {
     nextToken:"",
     listPost: [],
     listLike: [],
+    listLiked: [],
+    iniListLiked: function(temp){
+        buttonState = 'img/unliked.png';
+        console.log(temp);
+        return m.request({
+            method: "GET",
+            url: "_ah/api/myApi/v1/getLikePerson/"+temp+'?access_token='+encodeURIComponent(controller.userID),
+        })
+            .then(function(result){
+                console.log(result);
+                temp = result.properties.hasLiked;
+                if (temp == "true"){
+                    buttonState = 'img/liked.png';
+                }
+                if (temp == "false"){
+                    buttonState = 'img/unliked.png';
+                }
+                TimeLine.listLiked.push(buttonState);
+            })
+    },
+    isLiked: function(temp,index) {
+        buttonState = 'img/unliked.png';
+        console.log(temp);
+        return m.request({
+            method: "GET",
+            url: "_ah/api/myApi/v1/getLikePerson/" + temp + '?access_token=' + encodeURIComponent(controller.userID),
+        })
+            .then(function (result) {
+                console.log(result)
+                if (result.properties.hasLiked == "true") {
+                    buttonState = 'img/liked.png';
+                } else {
+                    buttonState = 'img/unliked.png';
+                }
+                TimeLine.listLiked.splice(index, 1, buttonState);
+            })
+    },
     view: function(vnode){
         return m('div', {class:'bodyContainer'},[
             TimeLine.listPost.map(function(item, index) {
@@ -555,9 +584,9 @@ var TimeLine = {
                     		m('button', {class:'postLikeButton', onclick: function(e) {
                                 Profile.likePost(item.key.name);
                     		}},
-                    				m('img', {class: 'postLikeButtonImage', src:PostView.listLiked[index]})
+                    				m('img', {class: 'postLikeButtonImage', src:TimeLine.listLiked[index]})
                     		),
-                    		m('label', {class: 'postLikeCounter'}, TimeLine.listLike[index].properties.likec + " like"),
+                    		m('label', {class: 'postLikeCounter'}, TimeLine.listLike[index] + " like"),
                     ),
                 ])
             }),
@@ -570,23 +599,6 @@ var TimeLine = {
                 },
             }),
         ])
-    },
-    loadTimeline: function() {
-        return m.request({
-            method: "GET",
-            url: "_ah/api/myApi/v1/timeline/"+'?access_token=' + encodeURIComponent(controller.userID)
-        })
-            .then(function(result) {
-                console.log("load_list:",result)
-                TimeLine.listPost=result.items
-                if ('nextPageToken' in result) {
-                    TimeLine.nextToken= result.nextPageToken
-                } else {
-                    TimeLine.nextToken=""
-                }})
-            .catch(function(e){
-                console.log(e)
-            })
     },
     getTimeline: function(){
         console.log("Call getTimeline");
@@ -604,6 +616,7 @@ var TimeLine = {
                 result.items.map(function(item){
                     TimeLine.listPost.push(item);
                     TimeLine.loadLike(item.key.name);
+                    TimeLine.iniListLiked(item.key.name);
                 })
             }else{
                 console.log("No post to show");

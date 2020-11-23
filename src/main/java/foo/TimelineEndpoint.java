@@ -58,9 +58,9 @@ public class TimelineEndpoint {
             collectionDebug.add(debug);
             return CollectionResponse.<Entity>builder().setItems(collectionDebug).setNextPageToken(cursorString).build();
         }
-
+        List<String> listOfFollow = (List<String>)listFollow;
         Query q = new Query("Post")
-                .setFilter(new FilterPredicate("owner",FilterOperator.IN,(List<String>)listFollow))
+                .setFilter(new FilterPredicate("owner",FilterOperator.IN,listOfFollow))
                 .addSort("date",SortDirection.DESCENDING);
 
         PreparedQuery pq = ds.prepare(q);
