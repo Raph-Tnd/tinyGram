@@ -4,6 +4,8 @@ function entityToProfile(entity){
     Profile.accountName = entity.properties.accountName;
     Profile.description = entity.properties.description;
     Profile.url = entity.properties.url;
+    Profile.listLike = [];
+    Profile.listPost = [];
 }
 
 var controller = {
@@ -115,6 +117,7 @@ var Profile = {
             Profile.listPost=result.items;
             Profile.listPost.map(function(item){
                 Profile.loadLike(item.key.name);
+                PostView.iniListLiked(item.key.name);
             })
             if ('nextPageToken' in result) {
                 Profile.nextToken= result.nextPageToken
@@ -140,6 +143,7 @@ var Profile = {
                 result.items.map(function(item){
                     Profile.listPost.push(item);
                     Profile.loadLike(item.key.name);
+                    PostView.iniListLiked(item.key.name);
                 })
             }else{
                 console.log("No post to show");
@@ -159,7 +163,7 @@ var Profile = {
         })
         .then(function(result){
             console.log(result);
-            Profile.listLike.push(result)
+            Profile.listLike.push(result.properties.likec);
         })
     },
     postMessage: function(desc,url) {
@@ -232,10 +236,9 @@ var Profile = {
                      i = index;
                 }
             });
-            Profile.listLike.splice(i,1,result);
+            Profile.listLike.splice(i,1,result.properties.likec);
+            PostView.isLiked(result.properties.key,i);
             //PostView.redraw();
-
-
         })
         .catch(function(e) {
             console.log(e.message)
@@ -355,10 +358,43 @@ var PostForm = {
 }
 
 var PostView = {
-    isLiked: function(temp){
+    listLiked: [],
+    iniListLiked: function(temp){
         buttonState = 'img/unliked.png';
         console.log(temp);
-            if (temp.properties.likel != null) {
+        return m.request({
+            method: "GET",
+            url: "_ah/api/myApi/v1/getLikePerson/"+temp+'?access_token='+encodeURIComponent(controller.userID),
+        })
+        .then(function(result){
+            console.log(result);
+            temp = result.properties.hasLiked;
+            if (temp == "true"){
+                buttonState = 'img/liked.png';
+            }
+            if (temp == "false"){
+                buttonState = 'img/unliked.png';
+            }
+            PostView.listLiked.push(buttonState);
+        })
+    },
+    isLiked: function(temp,index){
+        buttonState = 'img/unliked.png';
+        console.log(temp);
+        return m.request({
+            method: "GET",
+            url: "_ah/api/myApi/v1/getLikePerson/"+temp+'?access_token='+encodeURIComponent(controller.userID),
+        })
+        .then(function(result){
+            console.log(result)
+            if (result.properties.hasLiked == "true"){
+                buttonState = 'img/liked.png';
+            }else{
+                buttonState = 'img/unliked.png';
+            }
+            PostView.listLiked.splice(index,1,buttonState);
+        })
+            /*if (temp.properties.likel != null) {
                 if( temp.properties.likel.includes(emailToUniqueName(controller.currentUser.getBasicProfile().getEmail())) ) {
                     buttonState = 'img/liked.png';
                 }
@@ -366,6 +402,8 @@ var PostView = {
                 buttonState = 'img/unliked.png';
             }
             return buttonState;
+
+             */
         },
         view: function(vnode) {
             return m('div', [
@@ -385,10 +423,12 @@ var PostView = {
 
                             m('div', {class: 'postLikeContainer'},
 
-                                m('button', {class: 'postLikeButton', onclick: function(e) {Profile.likePost(item.key.name)}},
-                                        m('img', {class: 'postLikeButtonImage', src:PostView.isLiked(item)})
+                                m('button', {class: 'postLikeButton', onclick: function(e) {
+                                    Profile.likePost(item.key.name);
+                                }},
+                                    m('img', {class: 'postLikeButtonImage', src:PostView.listLiked[index]}),
                                 ),
-                                m('label', {class: 'postLikeCounter'}, vnode.attrs.profile.listLike[index].properties.likec+ " like"),
+                                m('label', {class: 'postLikeCounter'}, vnode.attrs.profile.listLike[index]+ " like"),
                             ),
                         ])
                     }else{
@@ -398,10 +438,12 @@ var PostView = {
                             ),
                             m('img', {class: 'postImage', 'src': item.properties.url}),
                             m('div', {class: 'postLikeContainer'},
-                                m('button', {class: 'postLikeButton', onclick: function(e) {Profile.likePost(item.key.name)}},
-                                        m('img', {class: 'postLikeButtonImage', src:PostView.isLiked(item)})
+                                m('button', {class: 'postLikeButton', onclick: function(e) {
+                                    Profile.likePost(item.key.name);
+                                }},
+                                        m('img', {class: 'postLikeButtonImage', src:PostView.listLiked[index]})
                                 ),
-                                m('label', {class: 'postLikeCounter'}, Profile.listLike[index].properties.likec + " like"),
+                                m('label', {class: 'postLikeCounter'}, Profile.listLike[index] + " like"),
                             ),
                         ])
                     }
@@ -510,8 +552,10 @@ var TimeLine = {
                     ),
                     m('img', {class: 'postImage', 'src': item.properties.url}),
                     m('div', {class: 'postLikeContainer'},
-                    		m('button', {class:'postLikeButton', onclick: function(e) {Profile.likePost(item.key.name)}},
-                    				m('img', {class: 'postLikeButtonImage', src:PostView.isLiked(item)})
+                    		m('button', {class:'postLikeButton', onclick: function(e) {
+                                Profile.likePost(item.key.name);
+                    		}},
+                    				m('img', {class: 'postLikeButtonImage', src:PostView.listLiked[index]})
                     		),
                     		m('label', {class: 'postLikeCounter'}, TimeLine.listLike[index].properties.likec + " like"),
                     ),
@@ -578,10 +622,10 @@ var TimeLine = {
             method: "GET",
             url: "_ah/api/myApi/v1/getLike/"+postKey,
         })
-            .then(function(result){
-                console.log(result);
-                TimeLine.listLike.push(result)
-            })
+        .then(function(result){
+            console.log(result);
+            TimeLine.listLike.push(result.properties.likec)
+        })
     },
 }
 
