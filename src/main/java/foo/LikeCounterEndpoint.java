@@ -7,12 +7,10 @@ import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.config.Named;
 import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.datastore.*;
-import com.google.appengine.api.datastore.Query.*;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.users.User;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 
 
@@ -96,8 +94,34 @@ public class LikeCounterEndpoint {
         for (Entity en : pq.asIterable()){
             nbLike += (long)en.getProperty("counter");
         }
-        Entity response = new Entity("response");
+        Entity response = new Entity("Response");
         response.setProperty("likec", nbLike);
+        return response;
+    }
+
+    @ApiMethod(name = "getLikePerson", path = "getLikePerson/{keyPost}/", httpMethod = HttpMethod.GET)
+    public Entity getLikePerson(User user, @Named("keyPost") String keyPost) throws UnauthorizedException {
+        if (user == null) {
+            throw new UnauthorizedException("Invalid credentials");
+        }
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+        String userName = user.getEmail().split("@")[0];
+        Entity response = new Entity("Response");
+        try {
+            Query q = new Query("LikePerson")
+                    .setFilter(new FilterPredicate("post", FilterOperator.EQUAL, keyPost))
+                    .setFilter(new FilterPredicate("profile", FilterOperator.EQUAL, userName));
+            PreparedQuery pq = ds.prepare(q);
+            Entity personPostLiked = pq.asSingleEntity();
+            if (personPostLiked == null){
+                response.setProperty("hasLiked", "false");
+            }else{
+                response.setProperty("hasLiked", "true");
+            }
+        }
+        catch(Exception e){
+            response.setProperty("hasLiked", "false");
+        }
         return response;
     }
 

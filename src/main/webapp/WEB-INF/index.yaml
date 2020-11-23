@@ -1,4 +1,5 @@
 indexes:
+
 - kind: Post
   properties:
     - name: owner
@@ -11,4 +12,11 @@ indexes:
     - name: name
       direction: asc
     - name: email
+      direction: asc
+
+- kind: LikePerson
+  properties:
+    - name: post
+      direction: asc
+    - name: profile
       direction: asc

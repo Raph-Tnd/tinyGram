@@ -32,7 +32,7 @@ import java.util.List;
 public class TimelineEndpoint {
 
     @ApiMethod(name = "getTimeline", path = "timeline",httpMethod = HttpMethod.GET)
-    public CollectionResponse<Entity> getTimeline(User user, @Nullable @Named("next") String cursorString) throws EntityNotFoundException, UnauthorizedException {
+    public CollectionResponse<Entity> getTimeline(User user) throws EntityNotFoundException, UnauthorizedException {
         if (user == null) {
             throw new UnauthorizedException("Invalid credentials");
         }
@@ -40,6 +40,7 @@ public class TimelineEndpoint {
         ArrayList<Entity> collectionDebug = new ArrayList<Entity>();
 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+
         Key profileKey = new Entity("Profile", user.getEmail().split("@")[0]).getKey();
         Entity profile = ds.get(profileKey);
 
@@ -47,7 +48,7 @@ public class TimelineEndpoint {
             debug = new Entity("response");
             debug.setProperty("message","User's profile not found");
             collectionDebug.add(debug);
-            return CollectionResponse.<Entity>builder().setItems(collectionDebug).setNextPageToken(cursorString).build();
+            return CollectionResponse.<Entity>builder().setItems(collectionDebug).build();
         }
 
         Object listFollow = profile.getProperty("follows");
@@ -56,26 +57,26 @@ public class TimelineEndpoint {
             debug = new Entity("response");
             debug.setProperty("message","Pas de followers");
             collectionDebug.add(debug);
-            return CollectionResponse.<Entity>builder().setItems(collectionDebug).setNextPageToken(cursorString).build();
+            return CollectionResponse.<Entity>builder().setItems(collectionDebug).build();
+        }
+        List<String> listOfFollow = (List<String>)listFollow;
+        QueryResultList<Entity> results = null;
+        PreparedQuery pq;
+        for (String follow : listOfFollow){
+            Query q = new Query("Post")
+                    .setFilter(new FilterPredicate("owner", FilterOperator.EQUAL, follow))
+                    .addSort("date",SortDirection.DESCENDING);
+            pq = ds.prepare(q);
+
+            FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
+            if ( results == null){
+                results = pq.asQueryResultList(fetchOptions);
+            }else{
+                results.addAll(pq.asQueryResultList(fetchOptions));
+            }
         }
 
-        Query q = new Query("Post")
-                .setFilter(new FilterPredicate("owner",FilterOperator.IN,(List<String>)listFollow))
-                .addSort("date",SortDirection.DESCENDING);
-
-        PreparedQuery pq = ds.prepare(q);
-
-        FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
-        if (cursorString != null) {
-            fetchOptions.startCursor(Cursor.fromWebSafeString(cursorString));
-        }
-        QueryResultList<Entity> results = pq.asQueryResultList(fetchOptions);
-        cursorString = results.getCursor().toWebSafeString();
-
-        return CollectionResponse.<Entity>builder().setItems(results).setNextPageToken(cursorString).build();
+        return CollectionResponse.<Entity>builder().setItems(results).build();
     }
-
-
-
 
 }
