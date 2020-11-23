@@ -77,6 +77,9 @@ var Profile = {
     userIsProfile:false,
     listPost:[],
     listLike:[],
+    oncreate: function(){
+        Profile.loadList();
+    },
     view: function(vnode){
         if(Profile.accountName ==""){
             Profile.loadProfile(vnode.attrs.user_url);
@@ -539,6 +542,9 @@ var TimeLine = {
     listPost: [],
     listLike: [],
     listLiked: [],
+    oncreate: function(){
+        TimeLine.getTimeline();
+    },
     iniListLiked: function(temp){
         buttonState = 'img/unliked.png';
         console.log(temp);
@@ -593,7 +599,7 @@ var TimeLine = {
                     ),
                 ])
             }),
-            m("input", {
+            /*m("input", {
                 type: "image",
                 src: "/img/nextArrow.png",
                 class: "postNextButton",
@@ -601,6 +607,8 @@ var TimeLine = {
                     TimeLine.getTimeline()
                 },
             }),
+
+             */
         ])
     },
     getTimeline: function(){
