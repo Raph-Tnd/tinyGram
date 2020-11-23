@@ -25,7 +25,7 @@ import java.util.*;
 
 public class PostEndpoint {
 
-
+	int nbPostToDisplay = 500;
 
 	@ApiMethod(name = "mypost", httpMethod = HttpMethod.GET)
 	public CollectionResponse<Entity> mypost(@Named("name") String name, @Nullable @Named("next") String cursorString) {
@@ -87,7 +87,7 @@ public class PostEndpoint {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		PreparedQuery pq = datastore.prepare(q);
 
-		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(2);
+		FetchOptions fetchOptions = FetchOptions.Builder.withLimit(nbPostToDisplay);
 
 		if (cursorString != null) {
 			fetchOptions.startCursor(Cursor.fromWebSafeString(cursorString));

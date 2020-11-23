@@ -185,10 +185,15 @@ var Profile = {
             console.log(e.message)
         })
     },
+    
+    
+    
+    
+    
     createFakeProfile: function(nbProfile) {
     	return m.request({
     		method: "POST",
-    		url: "_ah/api/myAPI/v1/profile/createFake/"+nbProfile
+    		url: "_ah/api/myApi/v1/profile/createFakeProfile/"+nbProfile,
     	})
     	.then(function() {
     		console.log("created");
@@ -197,6 +202,61 @@ var Profile = {
     		console.log(e.message, e.code)
     	})
     },
+    fakeFollow: function(profileName, nbProfile) {
+    	return m.request({
+    		method: "POST",
+    		url: "_ah/api/myApi/v1/profile/fakeFollow/"+profileName+"/"+nbProfile,
+    	})
+    	.then(function() {
+    		console.log("fake follow called");
+    	})
+    	.catch(function(e) {
+    		console.log(e.message, e.code)
+    	})
+    },
+    deleteFakeProfile: function(nbProfile) {
+    	return m.request({
+    		method: "POST",
+    		url: "_ah/api/myApi/v1/profile/deleteFakeProfile/"+nbProfile,
+    	})
+    	.then(function() {
+    		console.log("deleted fake profiles");
+    	})
+    	.catch(function(e) {
+    		console.log(e.message, e.code)
+    	})
+    },
+    deleteProfile: function(){
+        return m.request({
+            method: "DELETE",
+            url: "_ah/api/myApi/v1/profile/deleteProfile"+'?access_token='+encodeURIComponent(controller.userID),
+        })
+        .then(function(){
+            console.log("delete account");
+        })
+        .catch(function(e) {
+            console.log(e.message , e.code)
+
+        })
+    },
+    postFake: function(profileName, nbPost) {
+    	return m.request({
+    		method: "POST",
+    		url: "_ah/api/myApi/v1/profile/postFake/"+profileName+"/"+nbPost,
+    	})
+        .then(function(){
+            console.log("posted fake messages");
+        })
+        .catch(function(e) {
+            console.log(e.message , e.code)
+
+        })
+    },
+    
+    
+    
+    
+    
     createProfile: function(){
         return m.request({
             method: "POST",
