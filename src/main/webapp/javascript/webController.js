@@ -218,6 +218,9 @@ var Profile = {
             console.log(result);
             //deleting from view
             Profile.listPost.splice(Profile.listPost.indexOf(result),1);
+            Profile.listLike.splice(Profile.listPost.indexOf(result),1);
+            PostView.listLiked.splice(Profile.listPost.indexOf(result),1);
+            TimeLine.listLiked.splice(Profile.listPost.indexOf(result),1);
         })
     },
     likePost: function(key) {
