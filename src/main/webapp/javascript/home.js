@@ -20,10 +20,11 @@ var Home = {
                 m(m.route.Link,{href: "/profile/"+Home.userName, class: 'buttonSkin', id:'rightButton'},"Profile"),
                 
             ),
-            m('div', {class:'signatureContainer'},
+            m('div', {class:'signatureContainer'},[
                 m.trust('<p>' +
-                    'Louis NORMAND, Raphaël TENAUD, Sylvain BEAUDOIN, Thibault COLIN  -Web & Cloud-</p>')),
+                    'Louis NORMAND, Raphaël TENAUD, Sylvain BEAUDOIN, Thibault COLIN  -Web & Cloud-</p>'),
 
+                ]),
         ])
     }
 }
@@ -43,6 +44,7 @@ var Header = {
 
     }
 }
+
 
 
 

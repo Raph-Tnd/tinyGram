@@ -53,10 +53,11 @@ function gapiRender(id){
 }
 
 
-
 m.route(document.body, "/",{
 	"/": HomePage,
 	"/timeline": TimeLinePage,
 	"/profile/:user": ProfilePage,
 	"/profile/:user/update": ProfileUpdatePage
 })
+
+

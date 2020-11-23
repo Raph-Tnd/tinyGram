@@ -660,6 +660,13 @@ var ProfilePage = {
     }
 }
 
+var PageAbonnements = {
+    view: function(){
+        return m('div',"COUCOU")
+    }
+}
+
+
 var HomePage = {
     view: function (){
         return [m(Header),m(Home)]
